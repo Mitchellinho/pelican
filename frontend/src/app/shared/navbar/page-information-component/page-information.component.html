@@ -1,0 +1,26 @@
+<li class="nav-item dropdown" ngbDropdown placement="bottom-right">
+    <a class="nav-link" href="javascript:" ngbDropdownToggle>
+        <span class="bi-info-square mr-1"></span>&nbsp;
+        <span *ngIf="!hideDropdownButtonText">{{"shared.info.INFORMATION_PLURAL" | translate:locale.language}}</span>
+    </a>
+    <ul class="dropdown-menu-right" ngbDropdownMenu>
+        <li>
+            <a class="dropdown-item" href="https://www.tu-darmstadt.de/datenschutz.de.jsp"
+               target="_blank">
+                <span class="bi-info-square"></span>&nbsp;{{"shared.info.ANALYTICS" | translate:locale.language}}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="https://www.tu-darmstadt.de/datenschutzerklaerung.de.jsp"
+               target="_blank">
+                <span class="bi-info-square"></span>&nbsp;{{"shared.info.PRIVACY_POLICY" | translate:locale.language}}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="https://www.tu-darmstadt.de/impressum/index.de.jsp"
+               target="_blank">
+                <span class="bi-info-square"></span>&nbsp;{{"shared.info.LEGAL_NOTICE" | translate:locale.language}}
+            </a>
+        </li>
+    </ul>
+</li>

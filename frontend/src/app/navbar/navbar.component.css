@@ -1,0 +1,20 @@
+.font-size-32 {
+    font-size: 26px;
+    vertical-align: middle;
+}
+
+.inlined-block {
+    display: inline-block;
+    width: 32px !important;
+    height: 32px !important;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.nav-link {
+    fill: rgba(255, 255, 255, 0.5);
+}
+
+.nav-link:hover {
+    fill: rgba(255, 255, 255, 0.75);
+}

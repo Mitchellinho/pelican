@@ -1,0 +1,15 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Bewerbungen'"
+                      [link]="'../..'"></breadcrumbs-item>
+    <breadcrumbs-item [label]="'Bewerbungen hochladen'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="container my-5 text-center">
+    <p>Bitte laden Sie hier ihren BUZ Report hoch.</p>
+</div>
+<div class="container my-5">
+    <simple-upload-component
+        [uploadService]="extendedExampleExchangeService"
+        websocketId="07ee5965-01d8-4d4f-8f0c-50427337d7da"
+    ></simple-upload-component>
+</div>

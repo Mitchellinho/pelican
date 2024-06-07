@@ -1,0 +1,132 @@
+/*** CUSTOM CSS ***/
+.popover-custom-exam-name {
+    width: 500px !important;
+    max-width: 500px !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/*** END OF CUSTOM CSS ***/
+
+html {
+    overflow-y: scroll;
+}
+
+/* fix for https://github.com/twbs/bootstrap/issues/28101 */
+body {
+    padding-right: 0 !important;
+}
+
+@media (min-width: 1921px) {
+    .nbl-container {
+        max-width: 75% !important;
+    }
+}
+
+.text-none {
+    text-decoration: none !important;
+}
+
+/* control the overflow-x of all cards globally */
+.card-body {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.lg-modal .modal-dialog {
+    min-width: 90% !important;
+}
+
+svg.svg-responsive, .svg-responsive svg {
+    max-width: 100%;
+    height: auto;
+}
+
+pre.line-break {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    -webkit-transform: translate3d(0, 0, 0);
+}
+
+@media print {
+    /* Brighten up the dark navbar */
+    .navbar.navbar-dark {
+        background-color: inherit !important;
+    }
+
+    .navbar.navbar-dark .navbar-brand {
+        color: #292b2c !important;
+    }
+
+    /* Remove absolute positioning from footer-holder */
+    footer-component {
+        position: static;
+    }
+
+    body {
+        /* remove margin-bottom added by .footer-component */
+        margin-bottom: 0 !important;
+    }
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.text-ellipsis {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.text-ellipsis-lg {
+    max-width: 350px;
+}
+
+
+.bi-07x {
+    font-size: 0.7em
+}
+
+.bi-1x {
+    font-size: 1em
+}
+
+.bi-2x {
+    font-size: 2em
+}
+
+.bi-3x {
+    font-size: 3em
+}
+
+.bi-4x {
+    font-size: 4em
+}
+
+.bi-5x {
+    font-size: 5em
+}
+
+.bi-6x {
+    font-size: 6em
+}
+
+.bi-7x {
+    font-size: 7em
+}
+
+.bi-8x {
+    font-size: 8em
+}
+
+.bi-9x {
+    font-size: 9em
+}
+
+.bi-10x {
+    font-size: 10em
+}

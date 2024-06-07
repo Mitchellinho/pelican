@@ -1,0 +1,44 @@
+<li class="nav-item dropdown" ngbDropdown placement="bottom-right">
+    <a class="nav-link d-flex justify-content-center align-items-center" href="javascript:"
+       ngbDropdownToggle>
+        <ng-container [ngSwitch]="locale.language.substring(0, 2)">
+            <svg *ngSwitchCase="'de'"
+                 class="mr-1"
+                 height="16" style="filter: grayscale(70%)" width="21" xmlns="http://www.w3.org/2000/svg">
+                <use xlink:href="/assets/icons.svg#icon-de"></use>
+            </svg>
+            <svg *ngSwitchDefault
+                 class="mr-1"
+                 height="16" style="filter: grayscale(70%)" width="21" xmlns="http://www.w3.org/2000/svg">
+                <use xlink:href="/assets/icons.svg#icon-en"></use>
+            </svg>
+        </ng-container>&nbsp;
+        <span *ngIf="!hideDropdownButtonText" class="mr-1">
+            {{"shared.languages.LANGUAGE" | translate:locale.language}}
+        </span>
+    </a>
+    <ul class="dropdown-menu-right" ngbDropdownMenu>
+        <li>
+            <button (click)="isCollapsed = true; setLocale(locales['en'])"
+                    [class.active]="locale.language === 'en'"
+                    class="dropdown-item text-center d-flex justify-content-center align-items-center"
+                    type="button">
+                <svg class="mr-1" height="16" width="21" xmlns="http://www.w3.org/2000/svg">
+                    <use xlink:href="/assets/icons.svg#icon-en"></use>
+                </svg>&nbsp;
+                {{"shared.languages.ENGLISH" | translate:locale.language}}
+            </button>
+        </li>
+        <li>
+            <button (click)="isCollapsed = true; setLocale(locales['de'])"
+                    [class.active]="locale.language === 'de'"
+                    class="dropdown-item text-center d-flex justify-content-center align-items-center"
+                    type="button">
+                <svg class="mr-1" height="16" width="21" xmlns="http://www.w3.org/2000/svg">
+                    <use xlink:href="/assets/icons.svg#icon-de"></use>
+                </svg>&nbsp;
+                {{"shared.languages.GERMAN" | translate:locale.language}}
+            </button>
+        </li>
+    </ul>
+</li>

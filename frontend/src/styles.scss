@@ -1,0 +1,34 @@
+//@import '~bootstrap-icons/font/bootstrap-icons.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+$primary: #008877; // TU 3c
+$secondary: #8f839c;
+
+@import 'vendor/bootstrap/bootstrap.scss';
+
+//@import '~ngx-toastr/toastr';
+@import 'ngx-toastr/toastr.css';
+
+@import 'breakpoints';
+@import 'flex-list';
+
+/* Override: don't display the today date in larger font */
+.cal-month-view .cal-day-cell.cal-today .cal-day-number {
+    font-size: 1.2em;
+}
+
+.navbar {
+    background-color: var(--theme-color);
+
+    .dropdown-item:active, .dropdown-item.active {
+        background-color: var(--theme-color) !important;
+    }
+
+    .nav-link {
+        color: rgb(255, 255, 255) !important;
+    }
+}
+
+.fill-primary {
+    fill: var(--theme-color) !important;
+}

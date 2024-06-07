@@ -1,0 +1,15 @@
+*build
+*.class
+*.jar
+*.log
+*.lck
+.gradle
+.idea
+*.iml
+.env
+
+data/*
+src/main/resources/version.json
+.idea/workspace.xml
+.idea/.name
+node_modules/

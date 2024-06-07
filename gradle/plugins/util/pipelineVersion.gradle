@@ -1,0 +1,10 @@
+apply plugin: "war"
+
+// add versioning number from the GitLab Pipeline (from environment variable CI_PIPELINE_ID) to MANIFEST.MF
+war {
+    manifest {
+        def pipeLineId = System.getenv("CI_PIPELINE_ID")
+        // noinspection GroovyAssignabilityCheck
+        attributes("Version": (pipeLineId != null ? pipeLineId : "unknown"))
+    }
+}

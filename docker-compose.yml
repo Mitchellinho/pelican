@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  pelican-frontend:
+    restart: always
+    image: "registry.hda.onl/${CI_PROJECT_PATH}/frontend:${REVISION}"
+    ports:
+      - "8126:8081"
+  pelican-backend:
+    restart: always
+    image: "registry.hda.onl/${CI_PROJECT_PATH}/backend:${REVISION}"
+    ports:
+      - "8127:8080"
+    environment:
+      - "ALPHA_FRONTEND_URL=https://alpha.e-learning.tu-darmstadt.de"
+      - CASSANDRA_NODE
+      - ELASTICSEARCH_NODE
+      - CASSANDRA_DATACENTER
+      - TOKEN_SECRET
+      - TEMP_TOKEN_SECRET
+      - SERVICENAME_CASSANDRA_KEYSPACE

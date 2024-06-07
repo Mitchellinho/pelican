@@ -1,0 +1,22 @@
+<li class="nav-item dropdown ml-3" ngbDropdown placement="bottom-left">
+    <a class="nav-link" href="javascript:" ngbDropdownToggle>
+        <span class="bi-palette"></span>&nbsp;<span
+        class="d-md-none">{{"THEME" | translate:locale.language}}</span>
+    </a>
+    <ul class="dropdown-menu-right" ngbDropdownMenu style="min-width: auto;">
+        <li *ngFor="let themeName of (themes | keys)">
+            <div (click)="changeTheme(themeName)"
+                 [class.active]="curThemeName === themeName"
+                 [ngStyle]="(curThemeName === themeName) ? {'background-color': themes[themeName].primary} : {}"
+                 class="dropdown-item text-center pb-2 pt-2 d-flex align-items-center cursor-pointer">
+                <div style="background-color: white !important">
+                    <span [ngStyle]="{color: themes[themeName].primary}"
+                          class="bi-square-fill p-1"></span>
+                </div>
+                <div class="ml-2">
+                    {{themes[themeName].name}}
+                </div>
+            </div>
+        </li>
+    </ul>
+</li>

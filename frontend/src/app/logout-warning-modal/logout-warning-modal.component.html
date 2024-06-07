@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        {{'shared.logout.TOKEN_EXPIRED' | translate:locale.language}}
+    </h4>
+</div>
+
+<div class="modal-body">
+    {{'shared.logout.TOKEN_EXPIRED_INFO' | translate:locale.language}}
+</div>
+
+<div class="modal-footer">
+    <button (click)="saveRoute();logout();" class="btn btn-primary" type="button">
+        <span class="bi-box-arrow-right"></span> {{"shared.logout.LOGOUT" | translate:locale.language}}
+    </button>
+</div>

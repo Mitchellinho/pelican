@@ -1,0 +1,9 @@
+{
+    "/backend": {
+        "target": "http://localhost:12345",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "ws": true
+    }
+}

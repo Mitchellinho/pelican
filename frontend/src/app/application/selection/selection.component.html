@@ -1,0 +1,162 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Bewerbungen'"
+                      [link]="'..'"></breadcrumbs-item>
+    <breadcrumbs-item [label]="'Bewerbungen einteilen'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class=" mx-5 mt-4">
+    <h1>Bewerbungen einteilen</h1>
+    <hr>
+    <div class="my-5">
+        <table class="table table-bordered table-striped" id="SelectionTable">
+            <thead>
+            <tr>
+                <th scope="col" (click)="sort($event, 'applicationNumber')" style="cursor: pointer">
+                    <span></span>Bewerbungsnummer<span></span>
+                    <div>
+                        <input class=" form-control mt-1" type="text" (input)="search($event, 'applicationNumber')"
+                               (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                    </div>
+                </th>
+                <th scope="col" (click)="sort($event, 'lastName')" style="cursor: pointer">
+                    <span></span>Nachname<span></span>
+                    <div>
+                        <input class=" form-control mt-1" type="text" (input)="search($event, 'lastName')"
+                               (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                    </div>
+                </th>
+                <th scope="col" (click)="sort($event, 'firstName')" style="cursor: pointer">
+                    <span></span>Vorname<span></span>
+                    <div>
+                        <input class=" form-control mt-1" type="text" (input)="search($event, 'firstName')"
+                               (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                    </div>
+                </th>
+                <th scope="col">Universität</th>
+                <th scope="col">Beworben für</th>
+                <th scope="col">Serienbrief</th>
+                <th scope="col">neuer Bewerbungsstatus</th>
+                <th scope="col">Klausur</th>
+                <th scope="col">Klausurtermin</th>
+                <th scope="col">Auflagen</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let application of (applicationsTmp[this.searchCounter] | objectArraySort: applicationSortHelper ) | slice: (page-1) * pageSize : page * pageSize, let i = index">
+                <td>{{application.applicationNumber}}</td>
+                <td>{{application.lastName}}</td>
+                <td>{{application.firstName}}</td>
+                <td>{{application.university}}</td>
+                <td>{{studyRegulations[i + ((page-1)*pageSize)].name}}</td>
+                <td></td>
+                <td [ngSwitch]="this.status[findApplication(application.applicationNumber)]"
+                    (change)="changedStatus($event, i + ((page-1)*pageSize))">
+                    <select class="NewStatus" *ngSwitchCase="'invitedToExam'">
+                        <option value="invitedToExam" selected>Zur Klausur eingeladen</option>
+                        <option value="accepted">Fachlich zugelassen</option>
+                        <option value="denied">Abgelehnt</option>
+                        <option value="inProgress">In Bearbeitung</option>
+                    </select>
+                    <select class="NewStatus" *ngSwitchCase="'accepted'">
+                        <option value="invitedToExam">Zur Klausur eingeladen</option>
+                        <option value="accepted" selected>Fachlich zugelassen</option>
+                        <option value="denied">Abgelehnt</option>
+                        <option value="inProgress">In Bearbeitung</option>
+                    </select>
+                    <select class="NewStatus" *ngSwitchCase="'inProgress'">
+                        <option value="invitedToExam">Zur Klausur eingeladen</option>
+                        <option value="accepted">Fachlich zugelassen</option>
+                        <option value="denied">Abgelehnt</option>
+                        <option value="inProgress" selected>In Bearbeitung</option>
+                    </select>
+                    <select class="NewStatus" *ngSwitchDefault>
+                        <option value="invitedToExam">Zur Klausur eingeladen</option>
+                        <option value="accepted">Fachlich zugelassen</option>
+                        <option value="denied" selected>Abgelehnt</option>
+                        <option value="inProgress">In Bearbeitung</option>
+                    </select>
+                </td>
+                <td>
+                    <div [ngSwitch]="this.exam[findApplication(application.applicationNumber)]">
+                        <div *ngSwitchCase="undefined">
+                            Keine Klausur
+                        </div>
+                        <select (change)="changedSelectedExam($event, i + ((page-1)*pageSize))" class="ExamSelect" *ngSwitchDefault>
+                            <option *ngFor="let exam of this.exams, let j = index" value="{{exam.examId}}" [defaultSelected]="j === this.exam[findApplication(application.applicationNumber)]">
+                                {{exam.studyRegulationName}}</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div [ngSwitch]="this.exam[findApplication(application.applicationNumber)]">
+                        <div *ngSwitchCase="undefined">
+                            Keine Klausur
+                        </div>
+                        <select class="DateSelect" *ngSwitchDefault (change)="changedSelectedExamIndex($event, i + ((page-1)*pageSize))">
+                            <option
+                                *ngFor="let startTime of this.exams[this.exam[findApplication(application.applicationNumber)]].startTime, let j = index"
+                                value="{{j}}" [defaultSelected]="j === this.examIndex[findApplication(application.applicationNumber)]">
+                                {{numberToDate(startTime).toLocaleString() + "-" +
+                            numberToDate(this.exams[this.exam[findApplication(application.applicationNumber)]].endTime[j]).toLocaleString() + " " +
+                            getExamLocation(this.exams[this.exam[findApplication(application.applicationNumber)]].examLocationId[j]).city + " " +
+                            getExamLocation(this.exams[this.exam[findApplication(application.applicationNumber)]].examLocationId[j]).designation}}
+                            </option>
+                        </select>
+                    </div>
+                </td>
+                <td [ngSwitch]="this.status[findApplication(application.applicationNumber)]">
+                    <div *ngSwitchCase="'invitedToExam'">
+                        Keine Auflagen
+                    </div>
+                    <div *ngSwitchCase="'inProgress'">
+                        Keine Auflagen
+                    </div>
+                    <div *ngSwitchCase="'denied'">
+                        Keine Auflagen
+                    </div>
+                    <div ngbDropdown class="d-inline-block" *ngSwitchDefault>
+                        <a ngbDropdownToggle>Bitte auswählen</a>
+                        <div ngbDropdownMenu>
+                            <form class="px-4 py-3">
+                                <div
+                                    *ngFor="let condition of this.studyRegulations[i + ((page-1)*pageSize)].conditions, let j = index"
+                                    [ngSwitch]="this.rules[findApplication(application.applicationNumber)]?.condition.includes(condition)">
+                                    <div *ngSwitchCase="true" class="form-check">
+                                        <input type="checkbox" class="form-check-input conditionInput"
+                                               [attr.id]="'condition' + j" checked>
+                                        <label [attr.for]="'condition' + j"
+                                               class="form-check-label">{{condition}}</label>
+                                    </div>
+                                    <div *ngSwitchDefault class="form-check">
+                                        <input type="checkbox" class="form-check-input conditionInput"
+                                               [attr.id]="'condition' + j">
+                                        <label [attr.for]="'condition' + j"
+                                               class="form-check-label">{{condition}}</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+            <div>
+                <ngb-pagination [collectionSize]="this.applications.length" [pageSize]="pageSize" [(page)]="page"
+                                [maxSize]="5"
+                                [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+            </div>
+        </table>
+    </div>
+</div>
+<div class="container">
+    <div class="my-5">
+        <div class="row">
+            <div class="col text-left">
+                <button type="button" class="btn btn-danger" routerLink="../">Abbrechen</button>
+            </div>
+            <div class="col text-right">
+                <button type="button" class="btn btn-primary" (click)="saveChanges()">Speichern</button>
+            </div>
+        </div>
+    </div>
+</div>

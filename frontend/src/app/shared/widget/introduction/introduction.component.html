@@ -1,0 +1,47 @@
+<ng-container *ngIf="config">
+    <div class="row">
+        <div class="col">
+            <h2>{{"introduction.INTRODUCTION" | translate:locale.language}}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <ngb-accordion [activeIds]="partToOpen">
+                <ngb-panel *ngFor="let part of introParts" [id]="part">
+                    <ng-template ngbPanelHeader>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <button class="btn btn-link p-0" ngbPanelToggle>
+                                <span class="mr-1 bi-{{introPartsIcons[part]}}"></span>
+                                {{"introduction.title." + part.toUpperCase() | translate:locale.language}}
+                            </button>
+                            <div>
+                                <label>
+                                    <span *ngIf="!c(part)">
+                                        {{"shared.save.MARK_AS_READ" | translate:locale.language}}
+                                    </span>
+                                    <span *ngIf="c(part)">
+                                        {{"shared.save.MARKED_AS_READ" | translate:locale.language}}
+                                    </span>
+                                    <input (click)="markAsRead(part)" [ngModel]="c(part)" type="checkbox">
+                                </label>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template ngbPanelContent>
+                        <div
+                            [innerHTML]="'introduction.content.' + part.toUpperCase() | translate:locale.language:{link:linkBase}">
+                        </div>
+                        <div *ngIf="part === 'end'" class="mt-4">
+                            <button (click)="hideIntroduction()" class="btn btn-primary mr-2">
+                                {{"introduction.HIDE_INTRO" | translate:locale.language}}
+                            </button>
+                            <small
+                                [innerHTML]="'introduction.SETTINGS_NOTE' | translate:locale.language:{link:linkBase}">
+                            </small>
+                        </div>
+                    </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,30 @@
+{
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": false
+    },
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "rootDir": ".",
+        "sourceMap": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "target": "es2017",
+        "module": "es2020",
+        "lib": [
+            "es2020",
+            "dom"
+        ],
+        "typeRoots": [
+            "node_modules/@types",
+            "types"
+        ]
+    }
+}

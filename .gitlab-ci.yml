@@ -1,0 +1,259 @@
+# Disable the Gradle Daemon, see https://docs.gradle.org/current/userguide/gradle_daemon.html#sec:ways_to_disable_gradle_daemon
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  CI: "true"
+
+stages:
+  #- lint
+  - build
+  - test
+  - pack
+  - deploy
+  - manual
+
+cache:
+  paths:
+    - frontend/node_modules/
+    - .gradle/
+    - gcache/
+
+before_script:
+  - "####################### Preparation"
+  - mkdir -p artifacts
+  - mkdir -p ~/gcache
+
+
+.always-artifact-template: &always-artifact-template
+  name: "$CI_JOB_NAME"
+  when: always
+  expire_in: 28d
+
+.short-artifact-template: &short-artifact-template
+  name: "$CI_JOB_NAME"
+  when: always
+  expire_in: 1d
+
+.on-failure-artifact-template: &on-failure-artifact-template
+  name: "$CI_JOB_NAME"
+  when: on_failure
+  expire_in: 7d
+
+.copy-artifacts-template: &copy-artifacts-template
+  after_script:
+    - ./scripts/copy_artifacts.py "${CI_JOB_NAME/-b/}"
+
+#############
+# LINTING
+#############
+#lint-backend:
+#  <<: [*copy-artifacts-template]
+#  tags:
+#    - docker
+#  image: registry.hda.onl/nabla/containerbase/build-image:latest
+#  stage: lint
+#  script:
+#    - gradle -g gcache ktlintCheck detekt
+#  artifacts:
+#    <<: *on-failure-artifact-template
+#    paths:
+#      - build/reports/klint
+#  except:
+#    -  /^dependabot.npm_and_yarn.*$/
+
+#lint-frontend:
+#  tags:
+#    - docker
+#  image: registry.hda.onl/nabla/containerbase/build-image:latest
+#  services:
+#    - name: registry.hda.onl/nabla/containerbase/elassandra:latest
+#      alias: elassandra
+#  stage: lint
+#  script:
+#    - echo "Waiting for running elassandra!"
+#    - while ! nc -zv $ELASSANDRA_PORT_9042_TCP_ADDR 9042; do sleep 5; done
+#    - export CASSANDRA_NODE=$ELASSANDRA_PORT_9042_TCP_ADDR
+#    - export CASSANDRA_DATACENTER=DC1
+#    - gradle -g gcache openApiGenerateTs
+#    - cd ./frontend/
+#    - yarn install --immutable
+#    - yarn run lint
+#  except:
+#    -  /^dependabot.npm_and_yarn.*$/
+
+#languagelint-frontend:
+#  tags:
+#    - docker
+#  image: registry.hda.onl/nabla/containerbase/build-image:latest
+#  stage: lint
+#  script:
+#    - jsoncpl -a natural -o asc -l any -i four lint ./frontend/src/i18n/de ./frontend/src/i18n/en
+#  except:
+#    -  /^dependabot.npm_and_yarn.*$/
+
+#############
+# BUILD
+#############
+build-frontend:
+  tags:
+    - docker
+  image: registry.hda.onl/nabla/containerbase/build-image:latest
+  services:
+    - name: registry.hda.onl/nabla/containerbase/elassandra:latest
+      alias: elassandra
+  stage: build
+  script:
+    - echo "Waiting for running elassandra!"
+    - while ! nc -zv $ELASSANDRA_PORT_9042_TCP_ADDR 9042; do sleep 5; done
+    - export CASSANDRA_NODE=$ELASSANDRA_PORT_9042_TCP_ADDR
+    - export CASSANDRA_DATACENTER=DC1
+    - gradle -g gcache yarnBuild
+  artifacts:
+    <<: *always-artifact-template
+    paths:
+      - frontend/dist/
+  variables:
+    PELICAN_FRONTEND_URL: "https://pelican.hda.onl"
+    ALPHA_URL: "https://alpha.e-learning.tu-darmstadt.de"
+  except:
+    -  /^dependabot.npm_and_yarn.*$/
+
+build-backend:
+  tags:
+    - docker
+  image: registry.hda.onl/nabla/containerbase/build-image:latest
+  stage: build
+  script:
+    - gradle -g gcache clean assemble
+  artifacts:
+    <<: *always-artifact-template
+    paths:
+      - build/distributions/pelican.tar
+      - build/libs/pelican-all.jar
+  except:
+    -  /^dependabot.npm_and_yarn.*$/
+
+#############
+# TEST
+#############
+# TODO: Enable
+#test:
+#  <<: [*copy-artifacts-template]
+#  tags:
+#    - docker
+#  image: registry.hda.onl/nabla/containerbase/build-image:latest
+#  services:
+#    - name: registry.hda.onl/nabla/containerbase/elassandra:latest
+#      alias: elassandra
+#  stage: test
+#  variables:
+#    PELICAN_FRONTEND_URL: "https://pelican.hda.onl"
+#  script:
+#    - export CASSANDRA_NODE=$ELASSANDRA_PORT_9042_TCP_ADDR
+#    - export CASSANDRA_DATACENTER=DC1
+#    - gradle -g gcache clean test
+#  after_script:
+#    - ./scripts/print_coverage.py build/reports/test/jacocoTestReport.xml
+#    - "[ \"$CI_DEFAULT_BRANCH\" == \"$CI_COMMIT_REF_NAME\" ] && ./scripts/create_coverage_badge.py pelican 8 build/reports/test/jacocoTestReport.xml"
+#  artifacts:
+#    <<: *always-artifact-template
+#    paths:
+#      - build/reports/tests
+#      - build/reports/test
+#  except:
+#    -  /^dependabot.npm_and_yarn.*$/
+
+#############
+# DOCKER
+#############
+pack-backend:
+  tags:
+    - docker
+  image: registry.hda.onl/nabla/containerbase/docker:latest
+  stage: pack
+  services:
+    - docker:dind
+  before_script:
+    - export REVISION=$(git rev-parse --short HEAD)
+  script:
+    - cp build/libs/pelican-all.jar docker/backend/pelican-all.jar
+    - docker build --no-cache --pull -t registry.hda.onl/${CI_PROJECT_PATH}/backend:latest -t registry.hda.onl/${CI_PROJECT_PATH}/backend:${REVISION} docker/backend
+    - docker save registry.hda.onl/${CI_PROJECT_PATH}/backend:latest | gzip > backend.tar.gz
+    - "[ \"$CI_DEFAULT_BRANCH\" == \"$CI_COMMIT_REF_NAME\" ] && docker push registry.hda.onl/${CI_PROJECT_PATH}/backend:${REVISION} || [ \"$CI_DEFAULT_BRANCH\" != \"$CI_COMMIT_REF_NAME\" ]"
+    - "[ \"$CI_DEFAULT_BRANCH\" == \"$CI_COMMIT_REF_NAME\" ] && docker push registry.hda.onl/${CI_PROJECT_PATH}/backend:latest || [ \"$CI_DEFAULT_BRANCH\" != \"$CI_COMMIT_REF_NAME\" ]"
+  artifacts:
+    <<: *always-artifact-template
+    paths:
+      - backend.tar.gz
+  except:
+    -  /^dependabot.npm_and_yarn.*$/
+
+pack-frontend:
+  tags:
+    - docker
+  image: registry.hda.onl/nabla/containerbase/docker:latest
+  stage: pack
+  services:
+    - docker:dind
+  before_script:
+    - export REVISION=$(git rev-parse --short HEAD)
+  script:
+    - cp -R frontend/dist docker/frontend/dist
+    - docker build --pull -t registry.hda.onl/${CI_PROJECT_PATH}/frontend:latest -t registry.hda.onl/${CI_PROJECT_PATH}/frontend:${REVISION} docker/frontend
+    - docker save registry.hda.onl/${CI_PROJECT_PATH}/frontend:latest | gzip > frontend.tar.gz
+    - "[ \"$CI_DEFAULT_BRANCH\" == \"$CI_COMMIT_REF_NAME\" ] && docker push registry.hda.onl/${CI_PROJECT_PATH}/frontend:${REVISION} || [ \"$CI_DEFAULT_BRANCH\" != \"$CI_COMMIT_REF_NAME\" ]"
+    - "[ \"$CI_DEFAULT_BRANCH\" == \"$CI_COMMIT_REF_NAME\" ] && docker push registry.hda.onl/${CI_PROJECT_PATH}/frontend:latest || [ \"$CI_DEFAULT_BRANCH\" != \"$CI_COMMIT_REF_NAME\" ]"
+  artifacts:
+    <<: *always-artifact-template
+    paths:
+      - frontend.tar.gz
+  except:
+    -  /^dependabot.npm_and_yarn.*$/
+
+#############
+# DOC
+#############
+#doc:
+#  tags:
+#    - docker
+#  image: registry.hda.onl/nabla/containerbase/build-image-cloudsend:latest
+#  services:
+#    - name: registry.hda.onl/nabla/containerbase/elassandra:latest
+#      alias: elassandra
+#  stage: deploy
+#  script:
+#    - export CASSANDRA_NODE=$ELASSANDRA_PORT_9042_TCP_ADDR
+#    - export CASSANDRA_DATACENTER=DC1
+#    - gradle -g gcache buildApiDocsMd
+#    - mv "build/reports/api-doc/doc.md" "build/reports/api-doc/pelican.md"
+#    - cloudsend -q -p $NEXTCLOUD_UPLOAD_API_PASSWORD "build/reports/api-doc/pelican.md" https://nextcloud.hda.onl/s/JCNNipiMPyMo5XS
+#  variables:
+#    PELICAN_FRONTEND_URL: "http://localhost:12346" # unused
+#  artifacts:
+#    <<: *always-artifact-template
+#    paths:
+#      - build/reports/api-doc
+#  only:
+#    - master
+
+#############
+# DEPLOY
+#############
+deploy-loatheb:
+  image: registry.hda.onl/nabla/containerbase/docker-deploy
+  tags:
+    - deploy-loatheb
+  stage: deploy
+  services:
+    - docker:dind
+  before_script:
+    - export REVISION=$(git rev-parse --short HEAD)
+  script:
+    - docker pull registry.hda.onl/pelican/pelican/backend:$REVISION
+    - docker pull registry.hda.onl/pelican/pelican/frontend:$REVISION
+    - export CASSANDRA_NODE="10.11.0.8"
+    - export ELASTICSEARCH_NODE="10.11.0.8"
+    - export CASSANDRA_DATACENTER="HDA_EVEN"
+    - docker-compose config
+    - docker-compose up -d
+  only:
+    - master

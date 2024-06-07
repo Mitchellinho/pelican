@@ -1,0 +1,209 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Klausurort'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="container mt-4">
+    <h1>Klausurort</h1>
+    <hr>
+    <div class="my-4 text-right">
+        <button type="button" (click)="addExamLocation(addExamLocationModal)" class="btn btn-primary mr-4">
+            <i class="bi-plus-lg"></i>
+        </button>
+    </div>
+    <table class="table table-striped table-bordered" id="examLocationTable" style="table-layout: fixed">
+        <thead>
+        <tr>
+            <th scope="col" (click)="sort($event, 'zipCode')" style="cursor: pointer;">
+                <span></span>Postleitzahl<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'zipCode')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'city')" style="cursor: pointer;">
+                <span></span>Stadt<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'city')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'street')" style="cursor: pointer;">
+                <span></span>Straße<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'street')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'houseNumber')" style="cursor: pointer;">
+                <span></span>Hausnummer<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'houseNumber')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'designation')" style="cursor: pointer;">
+                <span></span>Raum<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'designation')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" id="description">Beschreibung</th>
+            <th scope="col" (click)="sort($event, 'department')" style="cursor: pointer;">
+                <span></span>Fachbereich<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'department')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" style="width: 10%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let examLocation of (this.examLocationsTmp[this.searchCounter] | objectArraySort: examLocationSortHelper )| slice: (page-1) * pageSize : page * pageSize, let i = index">
+            <td>{{examLocation.zipCode}}</td>
+            <td>{{examLocation.city}}</td>
+            <td>{{examLocation.street}}</td>
+            <td>{{examLocation.houseNumber}}</td>
+            <td>{{examLocation.designation}}</td>
+            <td>{{examLocation.description}}</td>
+            <td>{{examLocation.department}}</td>
+            <td class="text-center">
+                <button type="button" (click)="editExamLocation(editExamLocationModal, i + ((page-1)*pageSize))"
+                        class="btn btn-secondary ">
+                    <i class="bi-pencil"></i>
+                </button>
+                <button type="button" (click)="deleteExamLocation(deleteExamLocationModal, i + ((page-1)*pageSize))"
+                        class="btn btn-danger">
+                    <i class="bi-trash-fill"></i>
+                </button>
+            </td>
+        </tr>
+        <tr>
+        </tbody>
+    </table>
+    <div>
+        <ngb-pagination [collectionSize]="this.examLocations.length" [pageSize]="pageSize" [(page)]="page" [maxSize]="5"
+                        [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+    </div>
+</div>
+
+<ng-template #addExamLocationModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausurort hinzufügen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Postleitzahl</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Postleitzahl"/>
+        </div>
+        <div class="form-group">
+            <label>Stadt</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Stadt"/>
+        </div>
+        <div class="form-group">
+            <label>Straße</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Straße"/>
+        </div>
+        <div class="form-group">
+            <label>Hausnummer</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Hausnummer"/>
+        </div>
+        <div class="form-group">
+            <label>Raum</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Raum"/>
+        </div>
+        <div class="form-group">
+            <label>Beschreibung</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Beschreibung"/>
+        </div>
+        <div *ngIf="this.authService.getUserType() === 'Admin'" class="form-group">
+            <label>Fachbereich</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Fachbereich"/>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="addExamLocationToDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Hinzufügen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #editExamLocationModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausurort bearbeiten
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Postleitzahl</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Postleitzahl"/>
+        </div>
+        <div class="form-group">
+            <label>Stadt</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Stadt"/>
+        </div>
+        <div class="form-group">
+            <label>Straße</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Straße"/>
+        </div>
+        <div class="form-group">
+            <label>Hausnummer</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Hausnummer"/>
+        </div>
+        <div class="form-group">
+            <label>Raum</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Raum"/>
+        </div>
+        <div class="form-group">
+            <label>Beschreibung</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Beschreibung"/>
+        </div>
+        <div *ngIf="this.authService.getUserType() ==='Admin'" class="form-group">
+            <label>Fachbereich</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Fachbereich"/>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="updateExamLocationInDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Speichern
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteExamLocationModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausurort löschen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <h4>Möchten Sie diesen Klausurort wirklich löschen?</h4>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="deleteExamLocationFromDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Löschen
+        </button>
+    </div>
+</ng-template>
+
+
+

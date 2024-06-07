@@ -1,0 +1,15 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Einteilen'"
+                      [link]="'../..'"></breadcrumbs-item>
+    <breadcrumbs-item [label]="'QS Scores hochladen'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="container my-5 text-center">
+    <p>Laden Sie die aktuellen QS Scores hoch.</p>
+</div>
+<div class="container my-5">
+    <simple-upload-component
+        [uploadService]="extendedExampleExchangeService"
+        websocketId="e905d2a7-94d8-4fdb-9a8b-7b9e32ea6d3d"
+    ></simple-upload-component>
+</div>

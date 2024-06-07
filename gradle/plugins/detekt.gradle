@@ -1,0 +1,9 @@
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+detekt {
+    toolVersion = "1.21.0"
+    input = files("src/main/kotlin", "src/test/kotlin")
+//    filters = ".*/resources/.*,.*/build/.*"
+    ignoreFailures = false
+    config = files("${rootProject.projectDir}/gradle/plugins/detekt.yml")
+}

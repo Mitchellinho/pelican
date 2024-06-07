@@ -1,0 +1,133 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'HOME' | translate:locale.language"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<!-- TODO: Strings definieren -->
+<div *ngIf="this.authService.isAdmin()">
+<div [ngSwitch]="this.studyRegulations.length !== 0">
+    <div *ngSwitchCase="true" class="container mt-4" [ngSwitch]="this.applicationsAmount">
+        <h1>{{"Hallo " + authService.getUserDisplayName() + "!"}}</h1>
+        <hr>
+
+        <div *ngSwitchCase="0">
+            <div class="container my-5 text-center">
+                <p>Bitte laden Sie hier ihren BuZ-Report hoch.</p>
+            </div>
+            <div class="container my-5">
+                <simple-upload-component
+                    [uploadService]="extendedExampleExchangeService"
+                    websocketId="07ee5965-01d8-4d4f-8f0c-50427337d7da">
+                </simple-upload-component>
+            </div>
+        </div>
+
+        <div *ngSwitchDefault class="container my-5 text-center">
+            <h3>Überblick</h3>
+            <h3>Anzahl Bewerbungen: {{this.applicationsAmount}}</h3>
+            <h3>Davon in Bearbeitung: {{this.inProgressAmount}}</h3>
+            <h3>Davon zur Klausur eingeladen: {{this.invitedToExamAmount}}</h3>
+            <h3>Davon in Korrektur: {{this.inCorrectionAmount}}</h3>
+            <h3>Davon fachlich zugelassen: {{this.acceptedAmount}}</h3>
+            <h3>Davon abgelehnt: {{this.deniedAmount}}</h3>
+        </div>
+    </div>
+
+    <div *ngSwitchCase="false" class="text-center">
+        Es befinden sich noch keine Prüfungsordnungen im System. Bitte erstellen Sie zuerst eine <a routerLink="/studyregulations">Prüfungsordnung</a>.
+    </div>
+</div>
+</div>
+
+<div *ngIf="!this.authService.isAdmin()" class="container my-5">
+    <div class="tabs">
+        <ul class="nav nav-tabs">
+            <li *ngFor="let application of applications, let i = index" class="nav-item" [ngSwitch]="i">
+                <button *ngSwitchCase="0" class="nav-link active"
+                        (click)="showTab($event,application.appliedForName + ' ' + application.semester)"
+                        aria-current="page"
+                        href="#">{{application.appliedForName + ' ' + application.semester}}</button>
+                <button *ngSwitchDefault
+                        class="nav-link"
+                        (click)="showTab($event, application.appliedForName + ' ' + application.semester)"
+                        href="#">{{application.appliedForName + ' ' + application.semester}}</button>
+            </li>
+        </ul>
+    </div>
+    <div *ngFor="let application of applications, let i = index" class="mt-4 mx-5 tab-content"
+         id="{{application.appliedForName + ' ' + application.semester}}"
+         [ngStyle]="{'display': i === 0 ? '' : 'none'}">
+        <div class="row">
+            <table class="table table-bordered col text-center" id="statusTable"
+                   style="border: 1px solid black; width: 50%">
+                <tbody>
+                <tr>
+                    <td [ngStyle]="{'background-color': application.status === 'inProgress' ? 'lightblue' : ''}">
+                        Bewerbung in Bearbeitung
+                    </td>
+                </tr>
+                <tr>
+                    <td [ngStyle]="{'background-color': application.status === 'invitedToExam' ? 'lightblue' : ''}">
+                        Zur
+                        Klausur eingeladen
+                    </td>
+                </tr>
+                <tr>
+                    <td [ngStyle]="{'background-color': application.status === 'examInCorrection' ? 'lightblue' : ''}">
+                        Klausur in Korrektur
+                    </td>
+                </tr>
+                <tr>
+                    <td [ngStyle]="{'background-color': application.status === 'accepted' ||
+                        application.status === 'invitedToExamAccepted' ? 'lightgreen' : application.status === 'denied' ||
+                        application.status === 'invitedToExamDenied' ? 'red' : ''}">
+                        Fachlich zugelassen/Fachlich abgelehnt
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="col text-center" [ngSwitch]="application.status">
+                <div *ngSwitchCase="'invitedToExam'">
+                    <table class="table table-striped" id="examTable">
+                        <thead>
+                        <tr>
+                            <th scope="col">Klausurort</th>
+                            <th scope="col">Klausurraum</th>
+                            <th scope="col">Klausurdatum</th>
+                            <th scope="col">Klausurdauer</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <!--TODO: Change -->
+                            <td>{{findExamLocation(findExam(application.exam)?.examLocationId[application.examIndex])?.zipCode + " " + findExamLocation(findExam(application.exam)?.examLocationId[application.examIndex])?.city + " " +
+                            findExamLocation(findExam(application.exam)?.examLocationId[application.examIndex])?.street + " " + findExamLocation(findExam(application.exam)?.examLocationId[application.examIndex])?.houseNumber}}</td>
+                            <td>{{findExamLocation(findExam(application.exam)?.examLocationId[application.examIndex])?.designation}}</td>
+                            <td>{{numberToDate(findExam(application.exam)?.startTime[application.examIndex]).toLocaleString()
+                            + "  -  " + numberToDate(findExam(application.exam)?.endTime[application.examIndex]).toLocaleString()}}</td>
+                            <td>{{findExam(application.exam)?.examDuration + " Minuten"}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngSwitchCase="'examInCorrection'">
+                    Ihre Klausur wird zurzeit korrigiert.
+                </div>
+                <div *ngSwitchCase="'accepted'">
+                    Ihre Bewerbung wurde akzeptiert
+                </div>
+                <div *ngSwitchCase="'invitedToExamAccepted'">
+                    Ihre Bewerbung wurde akzeptiert
+                </div>
+                <div *ngSwitchCase="'denied'">
+                    Ihre Bewerbung wurde abgelehnt
+                </div>
+                <div *ngSwitchCase="'invitedToExamDenied'">
+                    Ihre Bewerbung wurde abgelehnt
+                </div>
+                <div *ngSwitchDefault>
+                    Ihre Bewerbung wird zurzeit noch bearbeitet
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+
+repositories {
+    maven {
+        url "https://git.hda.onl/api/v4/groups/158/-/packages/maven"
+        name "Cook GitLab"
+        credentials(HttpHeaderCredentials) {
+            name = 'Deploy-Token'
+            value = '8zFfnYJ4DyECyLFPfedz'
+        }
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
+    }
+}
+
+dependencies {
+    ktlintRuleset("de.tudarmstadt:ktlintrules:1.1.1")
+}
+
+ktlint {
+    version = "0.43.2"
+    verbose = true
+    outputToConsole = true
+    enableExperimentalRules = true
+    additionalEditorconfigFile = file(".editorconfig")
+    reporters {
+        reporter "plain"
+        reporter "checkstyle"
+    }
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
+}

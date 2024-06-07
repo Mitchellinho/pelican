@@ -1,0 +1,403 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'ASSIGN' | translate:locale.language"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<!-- TODO: Strings definieren: -->
+<div class="mx-2 mt-4">
+    <h1>Einteilen</h1>
+    <hr>
+
+    <div class="tabs">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link active" (click)="showTab($event,'Einteilen')" aria-current="page" href="#">
+                    Einteilen
+                </button>
+            </li>
+            <li class="nav-item" *ngIf="isAdmin">
+                <button class="nav-link" (click)="showTab($event,'Trainieren')" href="#">Trainieren</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" (click)="showTab($event,'Visualisierung')" href="#">Visualisierung</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+    <div class=" mt-4 mx-2 tab-content" id="Einteilen">
+
+
+        <table class="table-sm table-striped table-borderless" id="configTable">
+            <tr>
+                <td>Anzahl der gleichzeitig angezeigten Bewerber:</td>
+                <td><select class="form-select" id="statuDropdown" [(ngModel)]="displayNumber" (ngModelChange)="pull()">
+                    <option value=3>3</option>
+                    <option value=5>5</option>
+                    <option value=7>7</option>
+                    <option value=10>10</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>Prüfungsordnung:</td>
+                <td><select class="form-select" id="PODropdown" [(ngModel)]="studyRegulationId" (ngModelChange)="pull()">
+                    <option *ngFor="let regulation of this.studyRegulations "
+                            [value]="regulation.studyRegulationId">{{regulation.name}}</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>Bewerbungssemester:</td>
+                <td><select class="form-select" id="SemesterDropdown" [(ngModel)]="currentSemester" (ngModelChange)="pull()">
+                    <option *ngFor="let semester of this.semesters" [value]="semester">{{semester}}</option>
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Automatisierte Vorschläge zulassen?</b></td>
+                <td><input type="checkbox"  [(ngModel)]="learnerActive"
+                           (ngModelChange)="pull()">
+                </td>
+            </tr>
+        </table>
+
+        <div>
+            <label *ngIf="studyRegulation !== undefined && studyRegulation.classifier === null && learnerActive">
+                <b style="color: red;">Es hat noch kein Training stattgefunden. Wenden Sie sich an Ihren Administrator!</b>
+            </label>
+        </div>
+        <div *ngIf="predictionUniCount.some(checkThreshold)">
+            <b style="color: #f5bc8e">Zur Einteilung dieser Bewerbenden liegen nicht ausreichend Daten vor!</b>
+        </div>
+        <div>
+            <table class="table table-striped table-bordered" id="learnerTable">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        Zulassungs stelle
+                    </th>
+                    <th scope="col">
+                        Verfahren
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Bewerbungs nummer<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Nachname<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Vorname<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Beworben für<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Semester<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Universität<span></span>
+                    </th>
+                    <th scope="col" style="cursor: pointer">
+                        <span></span>Abschluss<span></span>
+                    </th>
+                    <th scope="col">Schonmal beworben</th>
+
+                    <th scope="col">
+                        Status
+                    </th>
+                    <th scope="col">
+                        Zulassung
+                    </th>
+                    <th scope="col">
+                        Auflagen
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let application of applications | slice: (page1-1) * pageSize : page1 * pageSize, let i = index"
+                    [ngSwitch]="application.status">
+                    <td>{{application.admissionsOffice}}</td>
+                    <td>{{application.method}}</td>
+                    <td>{{application.applicationNumber}}</td>
+                    <td>{{application.lastName}}</td>
+                    <td>{{application.firstName}}</td>
+                    <td>{{application.appliedForName}}</td>
+                    <td>{{application.semester}}</td>
+                    <td>{{application.university}}</td>
+                    <ng-container *ngIf="applicants[i]">
+                        {{ applicants[i].degree }}
+                    </ng-container>
+                    <td>{{application.alreadyApplied ? "Ja" : "Nein"}}</td>
+                    <td style="background-color: lightgreen" *ngSwitchCase="'accepted'">Fachlich zugelassen</td>
+                    <td style="background-color: lightgreen" *ngSwitchCase="'invitedToExamAccepted'">Fachlich zugelassen
+                        (Klausur)
+                    </td>
+                    <td style="background-color: red" *ngSwitchCase="'denied'">Abgelehnt</td>
+                    <td style="background-color: red" *ngSwitchCase="'invitedToExamDenied'">Abgelehnt(Klausur)</td>
+                    <td style="background-color: lightblue" *ngSwitchCase="'invitedToExam'">Zur Klausur eingeladen</td>
+                    <td style="background-color: lightblue" *ngSwitchCase="'examInCorrection'">Klausur in Korrektur</td>
+                    <td *ngSwitchDefault>in Bearbeitung</td>
+
+                    <td class="text-center" [style.background-color]="predictions[i] === -2 ? '#f5bc8e' : ''">
+                        <label>
+                            <input type="checkbox" [ngModel]="predictions[i] === 1" (ngModelChange)="checkBox(i, 1)">
+                            Annehmen
+                            <input type="checkbox" [ngModel]="predictions[i] === 0" (ngModelChange)="checkBox(i, 0)">
+                            Klausur
+                        </label>
+                    </td>
+                    <td class="text-center">
+                        <ng-container *ngIf="studyRegulation">
+                            <label *ngFor="let condition of this.studyRegulation.conditions, let j = index">
+                                <input type="checkbox" [ngModel]="predictionsConditions[i][j] === 1"
+                                       (ngModelChange)="checkBoxCondition(i, j, 1)"> {{condition}}
+                            </label>
+                        </ng-container>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row my-5">
+            <div class="col text-center">
+                <button title="Bewerbungen einteilen und weiter." type="button" class="btn btn-primary"
+                        (click)="acceptAndContinue()">Einteilen und weiter
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class=" mt-4 mx-2 tab-content" id="Trainieren" style="display: none" *ngIf="isAdmin">
+
+
+        <table class="table-sm table-striped table-borderless" id="trainingTable">
+            <tr>
+                <td>Batchsize für das Training:</td>
+                <td><select id="batchsizeDropdown" [(ngModel)]="trainingBatchSize">
+                    <option value=5>5</option>
+                    <option value=10>10</option>
+                    <option value=20>20</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>Maximale Tiefe der Bäume:</td>
+                <td><input type="text" [(ngModel)]="maxDepth"></td>
+            </tr>
+            <tr>
+                <td>Balanciertes Training:</td>
+                <td><input type="checkbox" [(ngModel)]="balanced">
+                </td>
+            </tr>
+        </table>
+
+        <div>
+            <div class="row">
+                <div ngbDropdown class="d-inline-block col">
+                    <a ngbDropdownToggle>Bitte wählen Sie die Semester aus, auf welchen Sie trainieren wollen</a>
+                    <div ngbDropdownMenu>
+                        <form class="px-4 py-3">
+                            <div *ngFor="let semester of this.semesters, let i = index">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input selectSemester">
+                                    <label class="form-check-label">{{semester}}</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col text-center">
+                <button title="Trainieren" type="button" class="btn btn-primary" (click)="train()">
+                    Trainieren
+                </button>
+            </div>
+            <div class="col text-center">
+                <button title="QS Score hochladen" type="button" class="btn btn-outline-primary" routerLink="upload/qsscore">
+                    QS Score hochladen
+                </button>
+            </div>
+        </div>
+
+
+
+
+        <div class="container my-5 text-center">
+            <div *ngIf="singleLabelScore !== undefined">
+
+                <table class="table table-striped table-bordered" id="scoreTable">
+
+                        <th scope="col">
+                        </th>
+                        <th scope="col">
+                            Genauigkeit
+                        </th>
+
+                    <tr>
+                        <td>Zulassungsvorhersage:</td>
+                        <td>{{singleLabelScore}}</td>
+                    </tr>
+                    <tr>
+                        <td>Zulassungsvorhersage Balanced:</td>
+                        <td>{{singleLabelScoreBalanced}}</td>
+                    </tr>
+                    <tr>
+                        <td>Auflagenvorhersage:</td>
+                        <td>{{multiLabelScore}}</td>
+                    </tr>
+                </table>
+
+
+                <div>
+                    <table class="table table-striped table-bordered" id="confusionMatrix">
+                        <tr>
+                            <td></td>
+                            <td>Predicted Positive</td>
+                            <td>Predicted Negative</td>
+                        </tr>
+                        <tr>
+                            <td>Actual Positive</td>
+                            <td>{{ truePositives }}</td>
+                            <td>{{ falseNegatives }}</td>
+                        </tr>
+                        <tr>
+                            <td>Actual Negative</td>
+                            <td>{{ falsePositives }}</td>
+                            <td>{{ trueNegatives }}</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+            <div>
+                <table class="table table-striped table-bordered" id="classifierTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            ID
+                        </th>
+                        <th scope="col">
+                            Erstellt
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Balanced Training<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Max Depth<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Min Samples per Leaf<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Trainingssemester<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Genauigkeit Zulassungsvorhersage<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Genauigkeit Zulassungsvorhersage Balanced<span></span>
+                        </th>
+                        <th scope="col" style="cursor: pointer">
+                            <span></span>Genauigkeit Auflagenvorhersage<span></span>
+                        </th>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let classifier of classifiers | slice: (page1-1) * pageSize : page1 * pageSize, let i = index">
+                        <td>{{classifier.id}}</td>
+                        <td>{{formatDate(classifier.created)}}</td>
+                        <td>{{classifier.balanced_training}}</td>
+                        <td>{{classifier.max_depth}}</td>
+                        <td>{{classifier.min_samples_leaf}}</td>
+                        <td>{{classifier.semester_trained_on}}</td>
+                        <td>{{classifier.single_label_score}}</td>
+                        <td>{{classifier.single_label_score_balanced}}</td>
+                        <td>{{classifier.multi_label_score}}</td>
+                        <td class="text-center" *ngIf="classifier.id === studyRegulation.classifier">
+                            <button title="Als aktiv setzen" type="button" (click)="setClassifier(i + ((page1-1)*pageSize))"
+                                    class="btn btn-success">
+                                <i class="bi-check2"></i>
+                            </button>
+                            <button title="Classifier löschen" type="button" (click)="deleteClassifier(i + ((page1-1)*pageSize))"
+                                    class="btn btn-danger">
+                                <i class="bi-trash-fill"></i>
+                            </button>
+                        </td>
+                        <td class="text-center" *ngIf="classifier.id !== studyRegulation.classifier">
+                            <button title="Als aktiv setzen" type="button" (click)="setClassifier(i + ((page1-1)*pageSize))"
+                                    class="btn btn-secondary">
+                                <i class="bi-check2"></i>
+                            </button>
+                            <button title="Classifier löschen" type="button" (click)="deleteClassifier(i + ((page1-1)*pageSize))"
+                                    class="btn btn-danger">
+                                <i class="bi-trash-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+    </div>
+</div>
+
+
+
+<div class=" mt-4 mx-2 tab-content" id="Visualisierung" style="display: none">
+    <h1>Aktueller Bewerbungszyklus</h1>
+    <div class="chart-container" style="position: relative; height:90vh; width:100vw">
+        <canvas id="overview"></canvas>
+    </div>
+
+    <div class="chart-container" style="position: relative; height:90vh; width:100vw">
+        <canvas id="universities"></canvas>
+    </div>
+
+    <div class="chart-container" style="position: relative; height:90vh; width:100vw">
+        <canvas id="dez"></canvas>
+    </div>
+
+
+
+    <h1>Vergangene Bewerbungszyklen</h1>
+
+
+    <table class = "table-sm table-striped table-borderless">
+        <tr>
+            <td>
+                <div>
+                    <select id="universalHistoryDropdown1" [(ngModel)]="category" (ngModelChange)="pollOptions()" class="custom-select-sm">
+                        <option *ngFor="let category of this.categories" [value]="category">{{category}}</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <select id="universalHistoryDropdown2" [(ngModel)]="categoryOption">
+                        <option *ngFor="let option of this.categoryOptions" [value]="option">{{option}}</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <button title="Bestätigen" type="button" class="btn btn-outline-primary" (click)="updateCharts()">Bestätigen</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="chart-container" style="position: relative; height:90vh; width:100vw">
+        <canvas id="universalHistory"></canvas>
+    </div>
+
+
+    <div class="chart-container" style="position: relative; height:90vh; width:100vw">
+        <canvas id="universityConditions"></canvas>
+    </div>
+
+
+</div>
+

@@ -1,0 +1,31 @@
+apply plugin: 'jacoco'
+
+ext {
+    coverageSourceDirs = 'src/test/java'
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDirectory = layout.buildDirectory.dir("$buildDir/reports")
+
+    applyTo run
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+run {
+    if (project.hasProperty("runArgs")) {
+        args project.getProperty("runArgs").toString().split(" ")
+    }
+}
+
+task applicationCodeCoverageReport(type:JacocoReport) {
+    executionData run
+    sourceSets sourceSets.main
+}
+
+test.finalizedBy jacocoTestReport

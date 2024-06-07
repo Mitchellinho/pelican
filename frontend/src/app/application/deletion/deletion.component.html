@@ -1,0 +1,67 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Bewerbungen'"
+                      [link]="'../'"></breadcrumbs-item>
+    <breadcrumbs-item [label]="'Bewerbungen löschen'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="mx-5 mt-4">
+    <h1>Bewerbungen</h1>
+    <hr>
+</div>
+<div class="mx-5 mt-4 text-center">
+    <div class="container my-5">
+        <h4>Wählen Sie die Semester aus die Sie löschen möchten.</h4>
+    </div>
+    <div class="row">
+        <div ngbDropdown class="d-inline-block col">
+            <a ngbDropdownToggle>Bitte wählen Sie die Semester aus</a>
+            <div ngbDropdownMenu>
+                <form class="px-4 py-3">
+                    <div *ngFor="let semester of this.semester, let i = index">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input selectSemester">
+                            <label class="form-check-label">{{semester}}</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <button title="Semesterdaten löschen" (click)="deleteSemester(deleteSemesterModal)" type="button" class="btn btn-danger">
+                Semesterdaten löschen
+            </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #deleteSemesterModal>
+    <div class="modal-header">
+        <h4 class="modal-title">Semesterdaten löschen</h4>
+    </div>
+
+    <div class="modal-body" [ngSwitch]="this.authService.getUserType()">
+        <div *ngSwitchCase="'Admin'">
+            <h4>Möchten Sie die Semesterdaten wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden und
+                die Daten können nicht wiederhergestellt werden!</h4>
+        </div>
+        <div *ngSwitchDefault>
+            <h4>Möchten Sie die Semesterdaten wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden!
+                Wenn Sie
+                die Daten wirklich löschen möchten geben Sie ein Admin Passwort in das Feld ein ansonsten drücken Sie
+                auf Abbrechen</h4>
+            <div class="form-group">
+                <label>Passwort</label>
+                <input class="form-control mt-2 formGroup" id="password" type="text" placeholder="Passwort"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-primary" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="delete()" class="btn btn-danger" type="button">
+            <span class="bi-box-arrow-right"></span> Löschen
+        </button>
+    </div>
+</ng-template>

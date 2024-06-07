@@ -1,0 +1,15 @@
+<div>
+    <loading-spinner *ngIf="!loaded" [size]="0" class="breadcrumb"></loading-spinner>
+    <ol *ngIf="loaded" class="breadcrumb">
+        <li *ngIf="buttonLink && buttonLabel" class="breadcrumb-item">
+            <a [routerLink]="buttonLink" class="btn btn-primary btn-sm">{{buttonLabel}}</a>
+        </li>
+        <li *ngFor="let item of items; let end=last" [class.active]="end" class="breadcrumb-item">
+            <span *ngIf="item.iconClass !== ''" [class]="item.iconClass"></span>
+            <a *ngIf="!end && item.link && !item.hasClickListener" [routerLink]="item.link">{{item.label}}</a>
+            <a (click)="item.click.emit(); $event.preventDefault()" *ngIf="!end && item.hasClickListener"
+               [href]="item.link || 'javascript:'">{{item.label}}</a>
+            <span *ngIf="end || (!item.link && !item.hasClickListener)">{{item.label}}</span>
+        </li>
+    </ol>
+</div>

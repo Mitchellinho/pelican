@@ -1,0 +1,87 @@
+.upload-component {
+    --border-radius: 5px;
+}
+
+.upload-field-top {
+    height: 250px;
+    border: 2px solid #888888;
+}
+
+.upload-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.upload-col-8 {
+    padding: 0;
+}
+
+.upload-field-top-alone {
+    border: 2px solid #888888;
+    border-radius: var(--border-radius);
+}
+
+.upload-field-top-together {
+    border-bottom: 1px solid #888888;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.upload-drop-zone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-top-left-radius: var(--border-radius);
+    background: repeating-linear-gradient(135deg, #ffffff, #ffffff 10px, #eeeeee 10px, #eeeeee 20px);
+}
+
+.upload-drop-zone-no-messages {
+    border-top-right-radius: var(--border-radius);
+}
+
+.upload-field-progressbar {
+    border: 2px solid #888888;
+    border-top: 0;
+}
+
+.upload-field-progressbar-text-enabled {
+    border-bottom: 0;
+}
+
+.upload-field-progressbar-text-disabled {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.upload-field-text-note {
+    min-height: 50px;
+    border: 2px solid #888888;
+    border-top: 1px solid #888888;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f4f4;
+    padding: 5px;
+}
+
+.upload-field-text-note strong {
+    margin-right: 10px;
+}
+
+.upload-field-text-note-no-progressbar {
+    border-top: 0;
+}
+
+.upload-messages {
+    border-left: 1px solid #888888;
+    overflow: auto;
+    max-height: 247px;
+}
+
+.progress {
+    border-radius: unset !important;
+}
+
+.upload-large-text {
+    font-size: 1.2em;
+}

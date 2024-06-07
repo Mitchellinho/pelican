@@ -1,0 +1,100 @@
+{
+    "APPLICANTS": "Bewerber",
+    "APPLICATIONS": "Bewerbungen",
+    "ASSIGN": "Einteilen",
+    "EXAM": "Klausur",
+    "EXAMPLE": "Beispiel",
+    "HELLO_WORLD": "Hallo Welt!",
+    "HOME": "Home",
+    "OUTGOING_WEBSOCKET_MESSAGES_ARE_NOT_TRACKED": "Ausgehende Nachrichten werden nicht aufgezeichnet",
+    "REPORT": "Report",
+    "RULES": "Regeln",
+    "SERIALLETTER": "Serienbrief",
+    "STUDYREGULATION": "Prüfungsordnung",
+    "UPLOAD_NOTE_TEXT": "Hier könnte Ihre Werbung stehen!",
+    "USER": "Benutzer",
+    "WEBSOCKET_EXAMPLE": "Websocket Beispiel",
+    "introduction": {
+        "HIDE_INTRO": "Einführung ausblenden",
+        "INTRODUCTION": "Einführung",
+        "SETTINGS_NOTE": "Die Einführung kann in den <a href=\"/user/settings\"><span class=\"bi-sliders\"></span> Benutzereinstellungen</a> wieder sichtbar gemacht werden.",
+        "content": {
+            "ASSESSMENT_GUIDELINES": "<strong>Was sind Bewertungsrichtlinien?</strong><br /><span class=\"bi-pencil-square text-primary\"></span> Bewertungsrichtlinien dienen dem Erstellen eines präzisen Bewertungsschemas. Falls die Prüfung mittels Tau erstellt wurde, sind bereits die vorgesehenen Maximalpunktzahlen für jede Aufgabe definiert, andernfalls sind die Punktzahlen beliebig.<br />Die Bewertungsrichtlinien für die Bewertung einer Abgabe können über die <a href=\"/exams/list\"><span class=\"bi-stack\"></span> Abgabenliste</a> aufgerufen werden. Die Bewertungsrichtlinien werden für alle gleichen Aufgaben in anderen Abgaben übernommen. Alternativ kann auf dem <a href=\"/dashboard\"><span class=\"bi-speedometer\"></span> Dashboard</a> die Liste der noch <a href=\"/lecturer/missingGuidelines\">fehlenden Bewertungsrichtlinien</a> abgerufen werden.<br /><br /><strong>Bewertungsrichtlinien erstellen</strong><br />Für jede Teilaufgabe (Eingabefeld) muss mindestens eine Bewertungsrichtlinie erstellt werden. Bei Prüfungen, die nicht mittels Tau erstellt wurden, ist die Vergabe von Punkten nicht beschränkt. Falls in Tau Maximalpunktzahlen je Aufgabe vergeben wurde, müssen diese Punkte auch vergeben werden.<br />[Nur für Tau-Klausuren:] Die Schaltfläche  \"<span class=\"bi-info-square text-primary\"></span> Validierungsübersicht\" zeigt die aus Tau importierten Maximalpunktzahlen an und wie diese bisher auf die Teilaufgaben verteilt wurden. Die Summe \"Vergebene Punkte\" und die Anzahl der \"Zu vergebenden Punkte\" muss übereinstimmen. In der Tabelle müssen folgende Bedingungen erfüllt werden: Gibt es für eine Teilaufgabe mehrere Referenzlösungen, müssen für alle Referenzlösungen Bewertungsrichtlinien angelegt werden und die Punkte dieser müssen gleich sein - bei der Summierung wird diese Punktzahl nur einmalig einbezogen. Die Summe aller Teilaufgaben, die zu einer Aufgabe gehören summieren sich zu der Summe der \"Vergebenen Punkte\".<br />Sobald Bewertungsrichtlinien erstellt wurden, können diese validiert werden. Ist die Validierung erfolgreich können Korrekturaufträge für Aufgaben erstellt werden, deren Bewertungsrichtlinien valide sind. Die Bewertungsrichtlinien werden nach der Validierung zur Änderung gesperrt. Diese <span class=\"bi-lock text-primary\"></span> Sperre kann aufgehoben werden.<br /><br /><strong>Valide Bewertungsrichtlinien ändern</strong><br />Die Änderungssperre kann mit der Schaltfläche <span class=\"bi-lock text-primary\"></span> aufgehoben werden. Sollten bereits Korrekturaufträge oder Korrekturen existieren, die auf Grundlage dieses Bewertungsschemas erstellt wurden, werden diese mit dem Status \"Veraltet\" versehen und sind ungültig. Für die Korrektur nach neuem Bewertungsschema müssen neue Korrekturaufträge erstellt werden. Vorkorrigierende, die bereits die entsprechende Aufgabe der selben Abgabe korrigiert hatten, bekommen ihre vorherigen Eingaben angezeigt und können sich an diesen orientieren.",
+            "END": "Die Einführung ist beendet, auf Wunsch kann diese für den weiteren Betrieb ausgeblendet werden. Bei Fragen oder Problemen kann der Support unter <a href=\"mailto:no@bo.dy\">no@bo.dy</a> erreicht werden.",
+            "IMPORT": "Lambda bietet verschiedene Möglichkeiten Prüfungen zu importieren. Der Prozess richtet sich nach der Art der jeweiligen Prüfung:<br /><ul><li><em>Die Prüfung wurde in Tau erstellt und in Delta geschrieben.</em><br />Hierzu kann das Exportpaket aus Delta auf der Seite <a href=\"/lecturer/upload\"><span class=\"bi-upload\"></span> Prüfung hochladen</a> eingelesen werden. Der Server verarbeitet das Paket und der nächste Schritt kann angegangen werden.</li><li><em>Die Prüfung wurde in Tau erstellt, aber auf Papier geschrieben und eingescannt.</em><br />Auf der Seite <a href=\"/lecturer/scanImport/referenceImport\"><span class=\"bi-file-earmark-plus\"></span> Referenzabgabe setzen</a> kann die in Tau generierte Zip-Datei mit den PAF-Dateien hochgeladen werden. Danach können unter <a href=\"/lecturer/scanImport/scanImportList\"><span class=\"bi-layers-half\"></span> Abgaben verwalten</a> die gescannten Abgaben hochgeladen werden, dies kann entweder einzeln je Abgabe erfolgen oder in mehreren großen PDF-Dateien, die jeweils mehrere Abgaben enthalten.<br />Alle hochgeladenen PDFs werden in Teile zerstückelt, die so viele Seiten umfassen wie die Referenzabgabe. Bitte laden Sie hier keine Zusatzblätter, Protokolle oder ähnliches hoch - die Abgaben müssen jeweils die gleiche Anzahl Seiten aufweisen.<br />Nach dem Hochladen können die Abgaben über die gleiche Seite mit den notwendigen Daten der Prüfungsteilnehmenden versehen werden, dies ist vor der Korrektur notwendig.</li><li><em>Die Prüfung wurde nicht in Tau erstellt und liegt als Scan vor.</em><br />Die Vorgehensweise unterscheidet sich nur leicht vom vorhergehenden Punkt. Statt einer Zip-Datei laden Sie unter <a href=\"/lecturer/scanImport/referenceImport\"><span class=\"bi-file-earmark-plus\"></span> Referenzabgabe setzen</a> eine leere Abgabe hoch und geben die einzelnen Aufgabenbereiche an.<br />Die weitere Vorgehensweise zu <a href=\"/lecturer/scanImport/scanImportList\"><span class=\"bi-layers-half\"></span> Abgaben verwalten</a> ist gleich mit der von in Tau erstellten Prüfungen.</li></ul>"
+        },
+        "title": {
+            "ASSESSMENT_GUIDELINES": "Bewertungsrichtlinien",
+            "END": "Ende der Einführung",
+            "IMPORT": "Abgaben und andere Dokumente importieren"
+        }
+    },
+    "shared": {
+        "error": {
+            "ERROR": "Fehler",
+            "request_errors": {
+                "ACTION_NOT_ALLOWED": "Diese Aktion ist nicht erlaubt.",
+                "INTERNAL_ERROR": "Interner Fehler beim Senden des Requests",
+                "MISSING_CONNECTION": "Es konnte keine Verbindung hergestellt werden."
+            }
+        },
+        "info": {
+            "ANALYTICS": "Analysen",
+            "INFORMATION_PLURAL": "Informationen",
+            "LEGAL_NOTICE": "Impressum",
+            "PRIVACY_POLICY": "Datenschutzerklärung"
+        },
+        "languages": {
+            "ENGLISH": "Englisch",
+            "GERMAN": "Deutsch",
+            "LANGUAGE": "Sprache"
+        },
+        "login": {
+            "LOGIN": "Anmelden",
+            "LOGIN_HINT": "Sie werden angemeldet... Danach werden Sie weitergeleitet.",
+            "LOGIN_SUCCESS": "Sie wurden erfolgreich angemeldet.",
+            "PASSWORD": "Passwort",
+            "USERNAME": "Benutzername"
+        },
+        "logout": {
+            "LOGOUT": "Abmelden",
+            "TOKEN_EXPIRED": "Sie werden ausgeloggt.",
+            "TOKEN_EXPIRED_INFO": "Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein."
+        },
+        "notfound": {
+            "ERROR": "Fehler",
+            "ERROR_404_MESSAGE": "Die aufgerufene Seite wurde nicht gefunden.",
+            "NOT_FOUND": "Seite nicht gefunden"
+        },
+        "profile": {
+            "PROFILE": "Profil",
+            "USER": "Benutzer*in",
+            "USER_SETTINGS": "Benutzereinstellungen"
+        },
+        "save": {
+            "LAST_SAVED": "Zuletzt gespeichert",
+            "MARKED_AS_READ": "Als gelesen markiert",
+            "MARK_AS_READ": "Als gelesen markieren",
+            "NOT_SAVED_YET": "Noch nicht gespeichert.",
+            "SAVE": "Speichern"
+        },
+        "upload": {
+            "CHOOSE_FILE": "Datei auswählen",
+            "CHOOSE_FILE_S": "Datei(en) auswählen",
+            "UPLOAD": "Hochladen",
+            "UPLOAD_FILE": "Datei in das Feld ziehen oder zum Hochladen anklicken.",
+            "UPLOAD_FILES": "Dateien in das Feld ziehen oder zum Hochladen anklicken.<br />Mehrere Dateien werden nacheinander verarbeitet.",
+            "UPLOAD_NOTE": "Hinweis",
+            "UPLOAD_PARTIAL_FAILED_FOR": "Die folgende Datei verursachte einen Fehler: '{{filename}}'. Weitere Informationen im Hochladeprotokoll.",
+            "UPLOAD_PARTIAL_SKIPPED_MULTIPLE": "Die folgenden Dateien wurden übersprungen und nicht hochgeladen",
+            "UPLOAD_PARTIAL_SKIPPED_ONE": "Die folgende Datei wurde übersprungen und nicht hochgeladen",
+            "UPLOAD_PARTIAL_SUCCESS_MULTIPLE": "Die folgenden Dateien wurden erfolgreich hochgeladen und werden weiterverarbeitet",
+            "UPLOAD_PARTIAL_SUCCESS_ONE": "Die folgende Datei wurde erfolgreich hochgeladen und wird weiterverarbeitet",
+            "UPLOAD_PROGRESS": "Hochladefortschritt",
+            "UPLOAD_PROTOCOL": "Hochladeprotokoll",
+            "UPLOAD_STARTED_FOR": "Hochladen gestartet für",
+            "UPLOAD_SUCCESSFUL_MULTIPLE": "Ihre Dateien wurden erfolgreich hochgeladen und werden nun weiterverarbeitet.",
+            "UPLOAD_SUCCESSFUL_ONE": "Ihre Datei wurde erfolgreich hochgeladen und wird nun weiterverarbeitet."
+        }
+    }
+}

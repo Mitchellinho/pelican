@@ -1,0 +1,268 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Klausur'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="mt-4 mx-5">
+    <h1>Klausur</h1>
+    <hr>
+    <div class="my-4 text-right">
+        <button type="button" (click)="addExam(addExamModal)" class="btn btn-primary mr-4">
+            <i class="bi-plus-lg"></i>
+        </button>
+    </div>
+    <table class="table table-striped table-bordered" id="examTable" style="table-layout: fixed">
+        <thead>
+        <tr>
+            <th scope="col" (click)="sort($event, 'studyRegulationName')" style="cursor: pointer">
+                <span></span>Klausur für<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'studyRegulationName')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col">
+                Kurs URL
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'courseUrl')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col">Termine</th>
+            <th scope="col">Klausurdauer</th>
+            <th scope="col"  (click)="sort($event, 'semester')" style="cursor: pointer">
+                <span></span>Semester<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'semester')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col"  (click)="sort($event, 'department')" style="cursor: pointer">
+                <span></span>Fachbereich<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'department')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col">Notizen</th>
+            <th scope="col" style="width: 10%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let exam of (this.examsTmp[this.searchCounter] | objectArraySort: examSortHelper ) | slice: (page-1) * pageSize : page * pageSize, let i = index">
+            <td>{{exam.studyRegulationName}}</td>
+            <td>{{exam.courseUrl}}</td>
+            <td [ngSwitch]="exam.startTime.length">
+                <div *ngSwitchCase="0">
+                    Keine
+                </div>
+                <details *ngSwitchDefault>
+                    <summary>{{exam.startTime.length === 1 ? "Termin" : "Termine"}}</summary>
+                    <p *ngFor="let startTime of exam.startTime, let j = index">
+                        {{buildMeetingString(startTime, exam.endTime[j], exam.examLocationId[j])}}
+                    </p>
+                </details>
+            </td>
+            <td>{{exam.examDuration}}</td>
+            <td>{{exam.semester}}</td>
+            <td>{{exam.department}}</td>
+            <td>{{exam.notes}}</td>
+            <td class="text-center">
+                <button type="button" (click)="editExam(editExamModal, i + ((page-1)*pageSize))"
+                        class="btn btn-secondary ">
+                    <i class="bi-pencil"></i>
+                </button>
+                <button type="button" (click)="deleteExam(deleteExamModal, i + ((page-1)*pageSize))"
+                        class="btn btn-danger">
+                    <i class="bi-trash-fill"></i>
+                </button>
+            </td>
+        </tr>
+        <tr>
+        </tbody>
+    </table>
+    <div>
+        <ngb-pagination [collectionSize]="this.exams.length" [pageSize]="pageSize" [(page)]="page" [maxSize]="5"
+                        [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+    </div>
+</div>
+
+<ng-template #addExamModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausur hinzufügen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Klausur für</label>
+            <div>
+                <select id="addExamFor">
+                    <option *ngFor="let studyRegulation of this.studyRegulations">{{studyRegulation.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Kurs URL</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Kurs URL"/>
+        </div>
+        <div class="form-group">
+            <div>
+                <label>Termine</label>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="datetime-local" id="addStartTime" placeholder="Auflage"/>
+                </div>
+                <div class="col">
+                    <input type="datetime-local" id="addEndTime" placeholder="Auflage"/>
+                </div>
+                <div class="col">
+                    <select id="addLocation">
+                        <option *ngFor="let examLocation of this.examLocations">
+                            {{examLocation.city + " " + examLocation.street + " " + examLocation.houseNumber
+                        + " " + examLocation.designation}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col text-right">
+                    <button (click)="createListElement('addStartTime', 'addEndTime', 'addLocation')" type="button"
+                            class="btn btn-primary">
+                        <i class="bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <ul class="MeetingList">
+                <li *ngFor="let startTime of this.newStartTimes, let i = index" class="meeting">
+                    {{numberToDate(startTime) + "--" +
+                numberToDate(this.newEndTimes[i]) + "--" +
+                buildExamLocationString(this.newExamLocationIds[i])}}<span style="cursor: pointer"
+                                                  (click)="removeElement($event.target, i)"
+                                                  class="bi-x"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="form-group">
+            <label>Klausurdauer(in Minuten)</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Klausurdauer"/>
+        </div>
+        <div class="form-group">
+            <label>Semester</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Semester"/>
+        </div>
+        <div class="form-group">
+            <label>Notizen</label>
+            <textarea class="form-control mt-2" id="addNotes" placeholder="Notizen" cols="33" rows="5"></textarea>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="addExamToDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Hinzufügen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #editExamModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausur bearbeiten
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Klausur für</label>
+            <div>
+                <select id="editExamFor">
+                    <option *ngFor="let studyRegulation of this.studyRegulations">{{studyRegulation.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Kurs URL</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Kurs URL"/>
+        </div>
+        <div class="form-group">
+            <div>
+                <label>Termine</label>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="datetime-local" id="editStartTime" placeholder="Auflage"/>
+                </div>
+                <div class="col">
+                    <input type="datetime-local" id="editEndTime" placeholder="Auflage"/>
+                </div>
+                <div class="col">
+                    <select id="editLocation">
+                        <option *ngFor="let examLocation of this.examLocations">
+                            {{examLocation.city + " " + examLocation.street + " " +
+                        examLocation.houseNumber + " " + examLocation.designation}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col text-right">
+                    <button (click)="createListElement('editStartTime', 'editEndTime', 'editLocation')" type="button"
+                            class="btn btn-primary">
+                        <i class="bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <ul class="MeetingList">
+                <li *ngFor="let startTime of this.newStartTimes, let i = index" class="meeting">
+                    {{numberToDate(startTime) + "--" +
+                numberToDate(this.newEndTimes[i]) + "--" +
+                buildExamLocationString(this.newExamLocationIds[i])}}<span style="cursor: pointer"
+                                                                      (click)="removeElement($event.target, i)"
+                                                                      class="bi-x"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="form-group">
+            <label>Klausurdauer(in Minuten)</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Klausurdauer"/>
+        </div>
+        <div class="form-group">
+            <label>Semester</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Semester"/>
+        </div>
+        <div class="form-group">
+            <label>Notizen</label>
+            <textarea class="form-control mt-2" id="editNotes" placeholder="Notizen" cols="33" rows="5"></textarea>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="updateExamInDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Speichern
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteExamModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Klausur löschen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <h4>Möchten Sie diese Klausur wirklich löschen?</h4>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="deleteExamFromDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Löschen
+        </button>
+    </div>
+</ng-template>

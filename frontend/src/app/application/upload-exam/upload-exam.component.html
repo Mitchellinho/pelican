@@ -1,0 +1,15 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'Bewerbungen'"
+                      [link]="'../..'"></breadcrumbs-item>
+    <breadcrumbs-item [label]="'Klausur hochladen'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="container my-5 text-center">
+    <p>Bitte laden Sie hier die Ergebnisse der Klausur hoch.</p>
+</div>
+<div class="container my-5">
+    <simple-upload-component
+        [uploadService]="extendedExampleExchangeService"
+        websocketId="38fea94a-212d-436e-a904-d9fca61a0516"
+    ></simple-upload-component>
+</div>

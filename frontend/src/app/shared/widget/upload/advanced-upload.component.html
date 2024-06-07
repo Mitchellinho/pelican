@@ -1,0 +1,64 @@
+<div>
+    <h3 *ngIf="showTexts && textHeader" class="mb-2">
+        {{textHeader | translate:locale.language }}
+    </h3>
+    <div class="upload-component">
+        <div [class.upload-field-top-alone]="!(showTexts && textNote) && progressbarValue <= 0"
+             [class.upload-field-top-together]="(showTexts && textNote) || progressbarValue > 0"
+             class="upload-field-top upload-row">
+            <div #uploadFileContainer (click)="fileInput.click()"
+                 (dragover)="onDragOverFile($event)"
+                 (drop)="onDropFile($event)"
+                 (mouseout)="uploadFileContainer.style.opacity = '1.0'"
+                 (mouseover)="uploadFileContainer.style.opacity = '0.8'"
+                 [class.col-12]="ws.websocketMessages.length === 0"
+                 [class.col-4]="ws.websocketMessages.length > 0"
+                 [class.upload-drop-zone-no-messages]="ws.websocketMessages.length === 0"
+                 class="upload-drop-zone">
+                <div class="text-center">
+                    <span class="bi-upload bi-4x"></span><br />
+                    <span *ngIf="progressbarValue > 0" class="upload-large-text">
+                        {{"shared.upload.UPLOAD_PROGRESS" | translate:locale.language}}: {{progressbarValue | number}}%</span>
+                    <ng-container *ngIf="progressbarValue <= 0">
+                        <span [innerHTML]="'shared.upload.UPLOAD_FILES' | translate:locale.language"
+                              class="upload-large-text">
+                        </span>
+                        <br />
+                        <button (click)="fileInput.click()"
+                                class="mt-1 btn btn-primary">
+                            <span class="bi-upload"></span> {{'shared.upload.CHOOSE_FILE_S' | translate:locale.language}}
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+            <div #messageFrame
+                 [class.d-none]="ws.websocketMessages.length === 0"
+                 class="col-8 upload-col-8 upload-messages">
+                <strong class="px-1 py-2">{{"shared.upload.UPLOAD_PROTOCOL" | translate:locale.language}}</strong>
+                <div #messages *ngFor="let msg of ws.websocketMessages">
+                    <div [class.alert-danger]="msg.status === UploadMessageStatus.ERROR"
+                         [class.alert-info]="msg.status === UploadMessageStatus.INFO"
+                         [class.alert-success]="msg.status === UploadMessageStatus.SUCCESS"
+                         [class.alert-warning]="msg.status === UploadMessageStatus.WARNING"
+                         class="small px-1">
+                        <span class="mr-2">{{msg.time | date:'mediumTime':undefined:locale.language}}</span>
+                        <span [innerHTML]="msg.message"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="progressbarValue > 0"
+             [class.upload-field-progressbar-text-disabled]="!(showTexts && textNote)"
+             [class.upload-field-progressbar-text-enabled]="showTexts && textNote"
+             class="upload-field-progressbar">
+            <ngb-progressbar [animated]="true" [value]="progressbarValue" type="success"></ngb-progressbar>
+        </div>
+        <div *ngIf="showTexts && textNote"
+             [class.upload-field-text-note-no-progressbar]="progressbarValue <= 0"
+             class="upload-field-text-note">
+            <strong>{{"shared.upload.UPLOAD_NOTE" | translate:locale.language }}:&nbsp;</strong>
+            {{textNote | translate:locale.language }}
+        </div>
+        <input #fileInput (change)="selectFiles($event)" hidden multiple="true" name="file" type="file" />
+    </div>
+</div>

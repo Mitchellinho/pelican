@@ -1,0 +1,100 @@
+{
+    "APPLICANTS": "Applicants",
+    "APPLICATIONS": "Applications",
+    "ASSIGN": "Assign",
+    "EXAM": "Exam",
+    "EXAMPLE": "Example",
+    "HELLO_WORLD": "Hello world!",
+    "HOME": "Home",
+    "OUTGOING_WEBSOCKET_MESSAGES_ARE_NOT_TRACKED": "Outgoing websocket messages are not tracked",
+    "REPORT": "Report",
+    "RULES": "Rules",
+    "SERIALLETTER": "Serialletter",
+    "STUDYREGULATION": "Studyregulation",
+    "UPLOAD_NOTE_TEXT": "Your advertisement could appear here!",
+    "USER": "User",
+    "WEBSOCKET_EXAMPLE": "Websocket Example",
+    "introduction": {
+        "HIDE_INTRO": "Hide introduction",
+        "INTRODUCTION": "Introduction",
+        "SETTINGS_NOTE": "The introduction can be made visible again through the <a href=\"/user/settings\"><span class=\"bi-sliders\"></span> user settings</a>.",
+        "content": {
+            "ASSESSMENT_GUIDELINES": "<strong>What are assessment guidelines?</strong><br /><span class=\"bi-pencil-square text-primary\"></span> Assessment guidelines are used to create a precise grading scheme. If the exam was created using Tau, the maximum points allowed for each task are already defined, otherwise the points are arbitrary.<br />The assessment guidelines for the assessment of a delivery can be accessed via the <a href=\"/exams/list\"><span class=\"bi-stack\"></span> Submission List</a>. The assessment guidelines are adopted for all the same tasks in other submissions. Alternatively, the <a href=\"/dashboard\"><span class=\"bi-speedometer\"></span> Dashboard</a> can be used to access the list of <a href=\"/lecturer/missingGuidelines\">missing assessment guidelines</a>.<br /><br /><strong>Creating assessment guidelines</strong><br />At least one assessment guideline must be created for each subtask (input field). For exams not created using Tau, there is no limit to the number of points that can be awarded. If maximum points per task were defined in Tau, these points must be awarded.<br />[Only for Tau exams:] The button \"<span class=\"bi-info-square text-primary\"></span> Validation Overview\" shows the maximum points imported from Tau and how they have been distributed to the subtasks so far. The sum of \"Points awarded\" and the number of \"Points to be awarded\" must match. The following conditions must be met in the table: If there are several reference solutions for a subtask, assessment guidelines must be created for all reference solutions and the points of these must be the same - when summing up, this number of points is only included once. The sum of all subtasks that belong to a task add up to the sum of the \"Points awarded\".<br />Once assessment guidelines have been created, they can be validated. If the validation is successful, correction assignments can be created for tasks whose assessment guidelines are valid. The assessment guidelines are locked for modification after validation. This <span class=\"bi-lock text-primary\"></span> lock can be removed.<br /><br /><strong>Change valid assessment guidelines</strong><br />The change lock can be removed with the <span class=\"bi-lock text-primary\"></span> button. If correction assignments or corrections already exist that were created on the basis of this grading scheme, they are given the status \"Outdated\" and are invalid. New correction assignments must be created for correction according to the new grading scheme. Pre-correctors who had already corrected the corresponding task of the same submission will have their previous entries displayed and can use them as a guide.",
+            "END": "The introduction is finished, if desired this can be hidden for further operation. If you have any questions or problems, support can be reached at <a href=\"mailto:no@bo.dy\">no@bo.dy</a>.",
+            "IMPORT": "Lambda offers various options for the import of exams. The process depends on the type of exam:<br /><ul><li><em>The exam was created in Tau and written in Delta.</em><br />For this, the export package from Delta can be imported on the <a href=\"/lecturer/upload\"><span class=\"bi-upload\"></span> Upload exam</a> page. The server processes the package and the next step can be tackled.</li><li><em>The exam was created in Tau but written on paper and scanned.</em><br />On the <a href=\"/lecturer/scanImport/referenceImport\"><span class=\"bi-file-earmark-plus\"></span> Set reference submission</a> page, the zip file with the PAF files generated in Tau can be uploaded. Then, under <a href=\"/lecturer/scanImport/scanImportList\"><span class=\"bi-layers-half\"></span> Manage submissions</a>, the scanned submissions can be uploaded, either individually or in several large PDF files, each containing multiple submissions.<br />All uploaded PDFs will be split into parts that contain as many pages as the reference submission. Please do not upload any supplementary sheets, protocols or similar here - the submissions must each have the same number of pages.<br />After uploading, the submissions can be provided with the necessary data of the examinees via the same page, this is necessary before correction.</li><li><em>The exam was not created in Tau and is already scanned.</em><br />The procedure differs only slightly from the previous point. Instead of a zip file, upload an empty submission to <a href=\"/lecturer/scanImport/referenceImport\"><span class=\"bi-file-earmark-plus\"></span> Set reference submission</a> and specify the individual task areas.<br />The further procedure with <a href=\"/lecturer/scanImport/scanImportList\"><span class=\"bi-layers-half\"></span> Manage submissions</a> is the same as that of exams created in Tau.</li></ul>"
+        },
+        "title": {
+            "ASSESSMENT_GUIDELINES": "Assessment guidelines",
+            "END": "End of introduction",
+            "IMPORT": "Import submissions and other documents"
+        }
+    },
+    "shared": {
+        "error": {
+            "ERROR": "Error",
+            "request_errors": {
+                "ACTION_NOT_ALLOWED": "This action is not allowed.",
+                "INTERNAL_ERROR": "Internal error while sending a request",
+                "MISSING_CONNECTION": "There is no connection."
+            }
+        },
+        "info": {
+            "ANALYTICS": "Analytics",
+            "INFORMATION_PLURAL": "Page information",
+            "LEGAL_NOTICE": "Legal notice",
+            "PRIVACY_POLICY": "Privacy policy"
+        },
+        "languages": {
+            "ENGLISH": "English",
+            "GERMAN": "German",
+            "LANGUAGE": "Language"
+        },
+        "login": {
+            "LOGIN": "Login",
+            "LOGIN_HINT": "You are being logged in.... You will be redirected.",
+            "LOGIN_SUCCESS": "You have been successfully logged in.",
+            "PASSWORD": "Password",
+            "USERNAME": "Username"
+        },
+        "logout": {
+            "LOGOUT": "Logout",
+            "TOKEN_EXPIRED": "You will be logged out.",
+            "TOKEN_EXPIRED_INFO": "Your session has expired. Please log in again."
+        },
+        "notfound": {
+            "ERROR": "Error",
+            "ERROR_404_MESSAGE": "The requested page was not found.",
+            "NOT_FOUND": "Page not found"
+        },
+        "profile": {
+            "PROFILE": "Profile",
+            "USER": "User",
+            "USER_SETTINGS": "User settings"
+        },
+        "save": {
+            "LAST_SAVED": "Last saved",
+            "MARKED_AS_READ": "Marked as read",
+            "MARK_AS_READ": "Mark as read",
+            "NOT_SAVED_YET": "Not saved yet.",
+            "SAVE": "Save"
+        },
+        "upload": {
+            "CHOOSE_FILE": "Choose file",
+            "CHOOSE_FILE_S": "Choose file(s)",
+            "UPLOAD": "Upload",
+            "UPLOAD_FILE": "Drop a file into this field or click to upload.",
+            "UPLOAD_FILES": "Drop files into this field or click to upload.<br />Multiple files will be processed after each other.",
+            "UPLOAD_NOTE": "Note",
+            "UPLOAD_PARTIAL_FAILED_FOR": "The following file caused an error: '{{filename}}'. See the upload protocol for more information.",
+            "UPLOAD_PARTIAL_SKIPPED_MULTIPLE": "The following files were skipped and not uploaded",
+            "UPLOAD_PARTIAL_SKIPPED_ONE": "The following file was skipped and not uploaded",
+            "UPLOAD_PARTIAL_SUCCESS_MULTIPLE": "The following files were successfully uploaded and are now being processed",
+            "UPLOAD_PARTIAL_SUCCESS_ONE": "The following file was successfully uploaded and is now being processed",
+            "UPLOAD_PROGRESS": "Upload progress",
+            "UPLOAD_PROTOCOL": "Upload protocol",
+            "UPLOAD_STARTED_FOR": "Upload started for file",
+            "UPLOAD_SUCCESSFUL_MULTIPLE": "Your files were successfully uploaded and are now being processed.",
+            "UPLOAD_SUCCESSFUL_ONE": "Your file was successfully uploaded and is now being processed."
+        }
+    }
+}

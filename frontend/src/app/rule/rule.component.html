@@ -1,0 +1,258 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'RULES' | translate:locale.language"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<!-- TODO: Strings definieren: -->
+
+<div class="mx-5 mt-4">
+    <h1>Regeln</h1>
+    <hr>
+    <div class="my-4 text-right">
+        <button type="button" (click)="addRule(addRuleModal)" class="btn btn-primary mr-4">
+            <i class="bi-plus-lg"></i>
+        </button>
+    </div>
+    <table class="table table-striped table-bordered" id="userTable">
+        <thead>
+        <tr>
+            <th scope="col">
+                Aktiv?
+            </th>
+            <th scope="col" (click)="sort($event, 'university')" style="cursor: pointer">
+                <span></span>Universität<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'university')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'appliedForName')" style="cursor: pointer">
+                <span></span>Beworben für<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'appliedForName')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" (click)="sort($event, 'department')" style="cursor: pointer">
+                <span></span>Fachbereich<span></span>
+                <div>
+                    <input class=" form-control mt-1" type="text" (input)="search($event, 'department')"
+                           (focusin)="onFocus($event)" (focusout)="onFocusLoss($event)">
+                </div>
+            </th>
+            <th scope="col" style="width: 5%"></th>
+            <th scope="col">Auflagen</th>
+            <th scope="col">Serienbrief</th>
+            <th scope="col">neuer Status</th>
+            <th scope="col">Kommentar</th>
+            <th scope="col">Regeltyp</th>
+            <th scope="col">Log</th>
+            <th scope="col" style="width: 10%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let rule of (this.rulesTmp[this.searchCounter] | objectArraySort: ruleSortHelper ) | slice: (page-1) * pageSize : page * pageSize, let i = index">
+            <td class="text-center"><input type="checkbox" (input)="updateActive($event, i + ((page-1)*pageSize))" [defaultChecked]="rule.isActive"></td>
+            <td>{{rule.university}}</td>
+            <td>{{rule.appliedForName}}</td>
+            <td>{{rule.department}}</td>
+            <td class="text-center" style="font-size: 150%">&#10132;</td>
+            <td [ngSwitch]="rule.condition.length">
+                <div *ngSwitchCase="0">
+                    Keine
+                </div>
+                <details *ngSwitchDefault>
+                    <summary>Auflagen</summary>
+                    <p *ngFor="let condition of rule.condition">{{condition}}</p>
+                </details>
+            </td>
+            <td>{{rule.serialLetter}}</td>
+            <td>Fachlich zugelassen</td>
+            <td>{{rule.comment}}</td>
+            <td>{{rule.isSystemGenerated ? "System generiert" : "Benutzer erstellt"}}</td>
+            <td class="text-center">
+                <button type="button" (click)="openLog(showLog, i + ((page-1)*pageSize))"
+                        class="btn btn-secondary">
+                    <i class="bi-eye"></i>
+                </button>
+            </td>
+            <td class="text-center">
+                <button type="button" (click)="editRule(editRuleModal, i + ((page-1)*pageSize))"
+                        class="btn btn-secondary ">
+                    <i class="bi-pencil"></i>
+                </button>
+                <button type="button" (click)="deleteRule(deleteRuleModal, i + ((page-1)*pageSize))"
+                        class="btn btn-danger">
+                    <i class="bi-trash-fill"></i>
+                </button>
+            </td>
+        </tr>
+        <tr>
+        </tbody>
+    </table>
+    <div>
+        <ngb-pagination [collectionSize]="this.rules.length" [pageSize]="pageSize" [(page)]="page" [maxSize]="5"
+                        [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+    </div>
+</div>
+
+<ng-template #addRuleModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Regel hinzufügen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>University</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="University"/>
+        </div>
+        <div class="form-group">
+            <label>Beworben für</label>
+            <div>
+                <select (change)="changedSelection($event)" id="addAppliedFor">
+                    <option *ngFor="let studyRegulation of this.studyRegulations">{{studyRegulation.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label>Auflagen</label>
+            </div>
+            <div ngbDropdown class="d-inline-block">
+                <a ngbDropdownToggle>Bitte auswählen</a>
+                <div ngbDropdownMenu>
+                    <form class="px-4 py-3">
+                        <div
+                            *ngFor="let condition of this.studyRegulations[this.selectedIndex].conditions,let i = index">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input conditionInput"
+                                       [attr.id]="'condition' + i">
+                                <label [attr.for]="'condition' + i" class="form-check-label">{{condition}}</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Serienbrief</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Serienbrief"/>
+        </div>
+        <div class="form-group">
+            <label>Kommentar</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Kommentar"/>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="addRuleToDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Hinzufügen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #editRuleModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Regel bearbeiten
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label>University</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="University"/>
+        </div>
+        <div class="form-group">
+            <label>Beworben für</label>
+            <div>
+                <select (change)="changedSelection($event)" id="editAppliedFor">
+                    <option *ngFor="let studyRegulation of this.studyRegulations">{{studyRegulation.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div ngbDropdown class="d-inline-block">
+                <a ngbDropdownToggle>Auflagen</a>
+                <div ngbDropdownMenu>
+                    <form class="px-4 py-3">
+                        <div
+                            *ngFor="let condition of this.studyRegulations[this.selectedIndex].conditions,let i = index"
+                            [ngSwitch]="this.rulesTmp[this.rulesTmp.length-1][this.selectedRow].condition.includes(condition)">
+                            <div *ngSwitchCase="true" class="form-check">
+                                <input type="checkbox" class="form-check-input conditionInput"
+                                       [attr.id]="'condition' + i" checked>
+                                <label [attr.for]="'condition' + i" class="form-check-label">{{condition}}</label>
+                            </div>
+                            <div *ngSwitchDefault class="form-check">
+                                <input type="checkbox" class="form-check-input conditionInput"
+                                       [attr.id]="'condition' + i">
+                                <label [attr.for]="'condition' + i" class="form-check-label">{{condition}}</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Serienbrief</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Serienbrief"/>
+        </div>
+        <div class="form-group">
+            <label>Kommentar</label>
+            <input class="form-control mt-2 textInput" type="text" placeholder="Kommentar"/>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="updateRuleInDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Speichern
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteRuleModal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Regel löschen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <h4>Möchten Sie diese Regel wirklich löschen?</h4>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-danger" type="button">
+            <span class="bi-x"></span> Abbrechen
+        </button>
+        <button (click)="deleteRuleFromDatabase()" class="btn btn-primary" type="button">
+            <span class="bi-box-arrow-right"></span> Löschen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #showLog>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            Log anzeigen
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <h4>{{this.rulesTmp[this.searchCounter][this.selectedRow].log}}</h4>
+    </div>
+
+    <div class="modal-footer">
+        <button (click)="cancel()" class="btn btn-secondary" type="button">
+            <span class="bi-x"></span> Zurück
+        </button>
+    </div>
+</ng-template>

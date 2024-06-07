@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday" # TODO: Please change to a random day from: "tuesday", "wednesday", "thursday"
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday" # TODO: See TODO above, please insert same day

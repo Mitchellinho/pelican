@@ -1,0 +1,30 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'SERIALLETTER' | translate:locale.language"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<!-- TODO: Strings definieren -->
+
+<div class="container mt-4">
+    <h1>Serienbriefe</h1>
+    <hr>
+    <div class="my-4 text-right">
+        <button type="button" class="btn btn-primary mr-4">
+            <i class="bi-plus-lg"></i>
+        </button>
+    </div>
+    <table class="table" id="letterTable">
+        <tbody>
+        <tr>
+            <td><b>Beispiel pdf</b></td>
+            <td>
+                <button type="button" class="btn btn-secondary ">
+                    <i class="bi-pencil"></i>
+                </button>
+                <button type="button" class="btn btn-danger">
+                    <i class="bi-trash-fill"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

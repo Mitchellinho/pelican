@@ -1,0 +1,58 @@
+<li *ngIf="!isLoggedIn" class="nav-item">
+    <a class="nav-link" routerLink="/login">
+        <span class="bi-box-arrow-in-right"></span> {{"shared.login.LOGIN" | translate:locale.language}}
+    </a>
+</li>
+<li *ngIf="isLoggedIn"
+    class="nav-item dropdown" ngbDropdown placement="bottom-right">
+    <a class="nav-link nav-user" href="javascript:" ngbDropdownToggle>
+        <ngx-boring-avatar-bauhaus
+            [square]="8"
+            [width]="25"
+            [name]="authService?.getUserId()"
+            [colors]="[ '#5d85c3', '#009cda', '#50b695', '#afcc50', '#dddf48', '#ffe05c', '#f8ba3c', '#ee7a34', '#e9503e', '#c9308e', '#804597' ]">
+        </ngx-boring-avatar-bauhaus>
+        {{(authService.getUserDisplayName()) ? authService.getUserDisplayName() : ("shared.profile.USER" | translate:locale.language)}}
+    </a>
+    <ul class="dropdown-menu-right" ngbDropdownMenu>
+        <li>
+            <a class="dropdown-item" href="{{alphaUrl}}/user/{{authService.getUserType()}}/{{authService.getUserId()}}"
+               target="_blank">
+                <span class="bi-person align-middle mr-1"></span>
+                <span class="align-middle">{{"shared.profile.PROFILE" | translate:locale.language}}</span>
+                <span class="bi-box-arrow-up-right ml-2 align-middle text-muted" style="font-size: 0.7em;"></span>
+            </a>
+        </li>
+        <li>
+            <div class="dropdown-divider"></div>
+        </li>
+        <li>
+            <a class="dropdown-item" routerLink="/user/settings">
+                <span class="bi-wrench align-middle mr-1"></span>
+                <span class="align-middle">{{"shared.profile.USER_SETTINGS" | translate:locale.language}}</span>
+            </a>
+        </li>
+        <li>
+            <div class="dropdown-divider"></div>
+        </li>
+        <li>
+            <button (click)="logout()" class="dropdown-item" type="button">
+                <span class="bi-box-arrow-right"></span>&nbsp;{{"shared.logout.LOGOUT" | translate:locale.language}}
+            </button>
+        </li>
+        <ng-container *ngIf="authService.isAdmin()">
+            <li>
+                <div class="dropdown-divider"></div>
+            </li>
+            <li>
+                <div class="dropdown-header">Debug Information</div>
+            </li>
+            <li>
+                <small  class="dropdown-header">
+
+                User ID: {{authService.getUserId() ? authService.getUserId() : "None"}}<br />
+                </small>
+            </li>
+        </ng-container>
+    </ul>
+</li>

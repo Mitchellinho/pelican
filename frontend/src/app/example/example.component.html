@@ -1,0 +1,44 @@
+<breadcrumbs-component [managesTitle]="true">
+    <breadcrumbs-item [label]="'EXAMPLE' | translate:locale.language" [link]="'/'"></breadcrumbs-item>
+</breadcrumbs-component>
+
+<div class="container mt-4">
+    <div class="my-5">
+        <h1>{{"HELLO_WORLD" | translate:locale.language}}</h1>
+        <div *ngIf="user">
+            {{user | json}}
+        </div>
+    </div>
+    <div *ngIf="!introductionHidden" class="my-5">
+        <h1>{{"introduction.INTRODUCTION" | translate:locale.language}}-{{"EXAMPLE" | translate:locale.language}}</h1>
+        <div>introductionHidden = {{introductionHidden}}</div>
+        <introduction-component (hide)="introductionHidden = $event"
+                                [introPartsIcons]="{import: 'upload', assessment_guidelines: 'clipboard', end: 'flag'}"
+                                [introParts]="['import', 'assessment_guidelines', 'end']"></introduction-component>
+    </div>
+    <div class="my-5">
+        <h1>Advanced Upload Component</h1>
+        <advanced-upload-component
+            [uploadService]="extendedAdvancedExampleExchangeService"
+            websocketId="711d1826-7bec-4326-ae17-35f36330ffcc"
+        ></advanced-upload-component>
+    </div>
+    <div class="my-5">
+        <h1>Simple Upload Component</h1>
+        <simple-upload-component
+            [uploadService]="extendedExampleExchangeService"
+            websocketId="07ee5965-01d8-4d4f-8f0c-50427337d7da"
+        ></simple-upload-component>
+    </div>
+    <div class="my-5">
+        <h1>{{"WEBSOCKET_EXAMPLE" | translate:locale.language}}</h1>
+        <div *ngIf="wsMsgs">
+            {{"OUTGOING_WEBSOCKET_MESSAGES_ARE_NOT_TRACKED" | translate:locale.language}}
+            <ul>
+                <li *ngFor="let msg of wsMsgs; let i = index">
+                    {{i}}: {{msg | json}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

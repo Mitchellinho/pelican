@@ -1,0 +1,208 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.7.22"
+    id "org.jetbrains.kotlin.kapt" version "1.7.22"
+
+    id "org.jlleitschuh.gradle.ktlint" version "11.0.0"
+    id "io.gitlab.arturbosch.detekt" version "1.22.0"
+
+    id "com.github.node-gradle.node" version "3.5.0"
+    id "org.openapi.generator" version "6.2.1"
+
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+
+    id "application"
+}
+
+apply from: "$rootDir/gradle/plugins/klint.gradle"
+apply from: "$rootDir/gradle/plugins/detekt.gradle"
+apply from: "$rootDir/gradle/plugins/jacoco.gradle"
+
+mainClassName = "core/BackendKt"
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo1.maven.org/maven2/" }
+    maven {
+        url "https://git.hda.onl/api/v4/groups/158/-/packages/maven"
+        name "HDA GitLab"
+        credentials(HttpHeaderCredentials) {
+            name = "Deploy-Token"
+            value = "8zFfnYJ4DyECyLFPfedz"
+        }
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
+    }
+    maven { url "https://maven.reposilite.com/releases" } // Javalin OpenAPI
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+
+    implementation group: "io.github.cdimascio", name: "dotenv-kotlin", version: "6.4.0"
+    implementation group: "com.auth0", name: "java-jwt", version: '4.3.0'
+
+    implementation group: "io.javalin", name: "javalin-bundle", version: '5.4.2'
+    implementation group: "com.github.joshuastorch.javalin-openapi", name: "javalin-openapi-plugin", version: "b4ef52ab0f"
+    kapt group: "com.github.joshuastorch.javalin-openapi", name: "openapi-annotation-processor", version: "b4ef52ab0f"
+//    implementation group: "io.javalin", name: "javalin-openapi-plugin", version: "x"
+//    kapt group: "io.javalin", name: "openapi-annotation-processor", version: "x"
+
+    implementation group: "com.nixxcode.jvmbrotli", name: "jvmbrotli", version: "0.2.0"
+    implementation group: "com.nixxcode.jvmbrotli", name: "jvmbrotli-linux-x86-amd64", version: "0.2.0"
+    implementation group: "com.nixxcode.jvmbrotli", name: "jvmbrotli-win32-x86", version: "0.2.0"
+    implementation group: "com.nixxcode.jvmbrotli", name: "jvmbrotli-win32-x86-amd64", version: "0.2.0"
+    implementation group: "com.nixxcode.jvmbrotli", name: "jvmbrotli-darwin-x86-amd64", version: "0.2.0"
+    implementation group: "io.swagger.core.v3", name: "swagger-core", version: '2.2.8'
+
+    implementation group: "com.github.kittinunf.fuel", name: "fuel", version: "2.3.1"
+
+    implementation group: "com.google.inject", name: "guice", version: "5.1.0"
+    implementation group: "com.google.guava", name: "guava", version: "31.1-jre"
+
+    implementation group: "dev.misfitlabs.kotlinguice4", name: "kotlin-guice", version: "1.6.0"
+    implementation group: "org.slf4j", name: "slf4j-simple", version: "2.0.5"
+
+    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: '2.14.2'
+    implementation group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: '2.14.2'
+
+    implementation group: "com.datastax.oss", name: "java-driver-core", version: "4.15.0"
+    implementation group: "com.datastax.oss", name: "java-driver-query-builder", version: "4.15.0"
+    implementation group: "com.datastax.oss", name: "java-driver-mapper-runtime", version: "4.15.0"
+    kapt group: "com.datastax.oss", name: "java-driver-mapper-processor", version: "4.15.0"
+    implementation group: "org.cognitor.cassandra", name: "cassandra-migration", version: "2.5.0_v4"
+
+    implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: '1.7.1'
+    implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-jdk8", version: '1.7.0-Beta'
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: '1.8.20-RC'
+
+    implementation group: "commons-codec", name: "commons-codec", version: "1.15"
+    implementation group: "org.apache.commons", name: "commons-email", version: "1.5"
+    implementation group: "org.apache.poi", name: "poi", version: "5.2.2"
+    implementation group: "org.apache.poi", name: "poi-ooxml", version: "5.2.2"
+    //ClassCast Issue when not commented so i commented it out
+   // implementation group: "com.sun.mail", name: "jakarta.mail", version: "2.0.1"
+
+    // Tests
+    testImplementation group: "org.mockito", name: "mockito-core", version: '5.2.0'
+    testImplementation group: "com.nhaarman.mockitokotlin2", name: "mockito-kotlin", version: "2.2.0"
+
+    testImplementation group: "org.junit.jupiter", name: "junit-jupiter-engine", version: '5.9.2'
+    testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: '5.9.2'
+    testImplementation group: "org.junit.jupiter", name: "junit-jupiter-params", version: '5.9.2'
+    testImplementation group: "com.github.kittinunf.fuel", name: "fuel-jackson", version: "2.3.1"
+
+    testImplementation group: "org.spekframework.spek2", name: "spek-dsl-jvm", version: "2.0.19"
+    testRuntimeOnly group: "org.spekframework.spek2", name: "spek-runner-junit5", version: "2.0.19"
+    testRuntimeOnly group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: '1.8.20-RC'
+}
+
+build {
+    def file = file("src/main/resources/version.json")
+    file.delete()
+    file.createNewFile()
+    def ciId = System.getenv("CI_PIPELINE_ID")
+    if (ciId == null) {
+        ciId = "unknown"
+    }
+    def time = new Date()
+    file.write("{\"ci-id\": \"$ciId\", \"time\": \"$time\"}")
+}
+
+def props = new Properties()
+def envFile = file("src/main/resources/.env")
+if (envFile.exists()) {
+    envFile.withInputStream { props.load(it) }
+} else {
+    props.putAll(System.getenv())
+}
+
+test {
+    useJUnitPlatform()
+}
+
+kapt {
+    useBuildCache = false
+}
+compileJava {
+    options.annotationProcessorPath = configurations.annotationProcessor
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+def docJsonFile = "$buildDir/reports/api-doc/doc.json"
+def docYmlFile = "$buildDir/reports/api-doc/doc.yml"
+def docMdFile = "$buildDir/reports/api-doc/doc.md"
+def isWindows = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")
+
+task buildApiDocs(type: JavaExec) {
+    dependsOn classes
+    inputs.dir("${project.projectDir}/src/main")
+    outputs.files(docJsonFile, docYmlFile)
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = "core/OpenApiCreateKt"
+    args docJsonFile, docYmlFile
+}
+
+task buildApiDocsMd(type: Exec) {
+    dependsOn buildApiDocs
+
+    if (isWindows) {
+        commandLine "cmd", "/c", "widdershins", "--search", "false", "--language_tabs", "--summary", docJsonFile, "-o", docMdFile
+    } else {
+        commandLine "widdershins", "--search", "false", "--language_tabs", "--summary", docJsonFile, "-o", docMdFile
+    }
+}
+
+def openApiTs = "${project.projectDir}/frontend/src/api"
+task openApiGenerateTs(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    dependsOn buildApiDocs
+    inputs.file(docJsonFile)
+    outputs.dir(openApiTs)
+
+    validateSpec = false
+
+    generatorName = "typescript-angular"
+
+    templateDir = "${project.projectDir}/openapi"
+    inputSpec = docJsonFile
+    outputDir = openApiTs
+}
+
+node {
+    version = "13.9.0"
+    yarnVersion = "1.22.0"
+
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}/npm")
+    yarnWorkDir = file("${project.buildDir}/yarn")
+    nodeModulesDir = file("${project.projectDir}/frontend")
+}
+
+task yarnInstall(type: YarnTask) {
+    inputs.file("${project.projectDir}/frontend/package.json")
+    outputs.dir("${project.projectDir}/frontend/node_modules")
+
+    args = ["install"]
+}
+
+task yarnBuild(type: YarnTask) {
+    dependsOn = [yarnInstall, openApiGenerateTs]
+
+    inputs.dir("${project.projectDir}/frontend/src/app")
+    inputs.dir("${project.projectDir}/frontend/src/api")
+    outputs.dir("${project.projectDir}/frontend/dist")
+
+    args = ["build"]
+}
